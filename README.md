@@ -1,5 +1,5 @@
 # Todo Site
-This is a fully functioning Todo site. It features fully working authentication system, creating, viewing and updating your Tasks (todos).<br>
+This is a fully functioning Todo site. It features fully working authentication system, creating, viewing, updating and deleting your Tasks (todos).<br>
 <br>
 The site is using my Auth-system app that I developed. You can find it [here](https://github.com/mirokrastev/django-projects/tree/master/Authentication%20System)<br>
 <br>
