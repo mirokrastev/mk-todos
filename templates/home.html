@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Home</title>
+{% endblock title %}
+
+
+{% block content %}
+<div class="container text-center">
+    {% if message %}
+        <h3>{{ message }}</h3>
+    {% endif %}
+    <br>
+    {% for task in todos %}
+        {% if task.important %}
+        <a href="{% url 'detailed_todo' task.id %}" class="btn btn-warning">
+            <b>{{ task.title }}</b>
+        {% else %}
+            <a href="{% url 'detailed_todo' task.id %}" class="btn btn-info">
+            {{ task.title }}
+        {% endif %}
+        <br>
+        </a>
+        {{ task.date_created|date:'j-n-Y H:i' }}
+        <br>
+        {{ task.memo|truncatechars:50 }}
+        <br><hr>
+    {% endfor %}
+    {% if user.is_authenticated %}
+        {% if not todos %}
+            <div>
+                <h4>Congrats, you don't have any tasks!</h4>
+                <p>Go ahead and create one, if you have! </p>
+            </div>
+        {% endif %}
+    {% else %}
+        <h3>Welcome to my Todo site!</h3>
+        <h3>You need to be registered to start creating your todos! :)</h3>
+    {% endif %}
+</div>
+{% endblock content %}
