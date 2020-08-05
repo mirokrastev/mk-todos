@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from register.views import register_view, login_view, logout_view
-from todolist.views import home_view
+from todolist.views import home_view, search_view
 
 urlpatterns = [
     # Admin
@@ -30,4 +30,5 @@ urlpatterns = [
     # Todos
     path('', home_view, name='home'),
     path('task/', include('todolist.urls')),
+    path('search/', search_view, name='search')
 ]

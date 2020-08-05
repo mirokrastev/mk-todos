@@ -11,50 +11,7 @@
     {% endblock title %}
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container text-center">
-        <a class="navbar-brand" href="{% url 'home' %}">Todos</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active" style="margin-right: 30px;">
-                    <a class="nav-link" href="{% url 'home' %}">Home</a>
-                </li>
-                {% if user.is_authenticated %}
-                    <li>
-                        <form action="{% url 'create' %}" method="GET">
-                            <button type="submit" class="btn btn-primary">Create</button>
-                        </form>
-                    </li>
-                    <li>
-                        <form action="{% url 'completed_todos' %}" method="GET" style="margin-left: 20px;">
-                            <button type="submit" class="btn btn-primary">Completed</button>
-                        </form>
-                    </li>
-                {% endif %}
-            </ul>
-
-            {% if user.is_authenticated %}
-                <p>You are logged in as {{ user.username }}</p>
-                <form action="{% url 'logout_v' %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" style="margin-left: 50px">Logout</button>
-                </form>
-
-            {% else %}
-                <form action="{% url 'login_v' %}" method="GET">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
-                <form action="{% url 'register' %}" method="GET">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary" style="margin-left: 10px">Register</button>
-                </form>
-            {% endif %}
-
-        </div>
-    </div>
-</nav>
+{% include 'navbar.html' %}
 
 {% block content %}{% endblock content %}
 

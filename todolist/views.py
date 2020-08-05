@@ -20,6 +20,13 @@ def get_object(request, task_pk):
 
 
 @login_required
+def search_view(request):
+    word = request.GET['search']
+    todos = Task.objects.filter(user=request.user, title__icontains=word)
+    return render(request, 'home.html', {'todos': todos})
+
+
+@login_required
 def completed_todos_view(request):
     todos = Task.objects.filter(user=request.user, date_completed__isnull=False).order_by('-date_created')
     return render(request, 'home.html', {'todos': todos})
@@ -52,6 +59,8 @@ def detailed_todo_view(request, task_pk):
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
         form.save()
+        return home_view(request)
+
     task_paragraph = TaskForm(instance=task)
     return render(request, 'todolist/detailed_todo.html', {'object': task, 'task': task_paragraph})
 
@@ -65,7 +74,7 @@ def complete_todo_view(request, task_pk):
     if request.method == 'POST':
         task.date_completed = timezone.now()
         task.save()
-        return render(request, 'home.html', {'message': f'You completed task {task.title}!'})
+        return home_view(request, f'You completed task {task.title}!')
     return redirect(home_view)
 
 
@@ -77,5 +86,5 @@ def delete_todo_view(request, task_pk):
 
     if request.method == 'POST':
         task.delete()
-        return render(request, 'home.html', {'message': f'You deleted task {task.title}!'})
+        return home_view(request, f'You deleted task {task.title}!')
     return redirect(home_view)
