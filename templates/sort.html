@@ -1,0 +1,14 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'sort_style.css' %}">
+
+<div class="dropdown">
+    <button class="dropbtn">Sort by</button>
+    <div class="dropdown-content">
+        <form method="GET">
+            <input class="btn btn-primary" value="ascending" name="order_by" type="submit">
+        </form>
+        <form method="GET">
+            <input class="btn btn-primary" value="descending" name="order_by" type="submit">
+        </form>
+    </div>
+</div>

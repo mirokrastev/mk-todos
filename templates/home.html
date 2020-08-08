@@ -15,6 +15,10 @@
     <br>
 
     {% for task in todos %}
+        {% if task.is_first %}
+            {% include 'sort.html' %}
+        {% endif %}
+
         {% if task.important %}
             <a href="{% url 'detailed_todo' task.id %}" class="btn btn-warning">
             <b>{{ task.title }}</b>

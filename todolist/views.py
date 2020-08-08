@@ -5,11 +5,18 @@ from .models import Task
 from django.utils import timezone
 
 
-def home_view(request, error=None):
+def home_view(request, isnull=True, message=None):
+    ORDER_BY = {'ascending': 'date_created', 'descending': '-date_created'}
     todos = None
+
     if request.user.is_authenticated:
-        todos = Task.objects.filter(user=request.user, date_completed__isnull=True).order_by('-date_created')
-    return render(request, 'home.html', {'todos': todos, 'message': error})
+        order = ORDER_BY[request.GET.get('order_by', 'descending')]
+        todos = list(
+            Task.objects.filter(user=request.user, date_completed__isnull=isnull).order_by(order)
+        )
+        if todos:
+            todos[0].is_first = True
+    return render(request, 'home.html', {'todos': todos, 'message': message})
 
 
 def get_object(request, task_pk):
@@ -28,8 +35,7 @@ def search_view(request):
 
 @login_required
 def completed_todos_view(request):
-    todos = Task.objects.filter(user=request.user, date_completed__isnull=False).order_by('-date_created')
-    return render(request, 'home.html', {'todos': todos})
+    return home_view(request, isnull=False)
 
 
 @login_required
@@ -54,7 +60,7 @@ def create_todo_view(request):
 def detailed_todo_view(request, task_pk):
     task = get_object(request, task_pk)
     if not task:
-        return home_view(request, 'Invalid task.')
+        return home_view(request, message='Invalid task.')
 
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
@@ -69,12 +75,12 @@ def detailed_todo_view(request, task_pk):
 def complete_todo_view(request, task_pk):
     task = get_object(request, task_pk)
     if not task:
-        return home_view(request, 'Invalid task.')
+        return home_view(request, message='Invalid task.')
 
     if request.method == 'POST':
         task.date_completed = timezone.now()
         task.save()
-        return home_view(request, f'You completed task {task.title}!')
+        return home_view(request, message=f'You completed task {task.title}!')
     return redirect(home_view)
 
 
@@ -82,9 +88,9 @@ def complete_todo_view(request, task_pk):
 def delete_todo_view(request, task_pk):
     task = get_object(request, task_pk)
     if not task:
-        return home_view(request, 'Invalid task.')
+        return home_view(request, message='Invalid task.')
 
     if request.method == 'POST':
         task.delete()
-        return home_view(request, f'You deleted task {task.title}!')
+        return home_view(request, message=f'You deleted task {task.title}!')
     return redirect(home_view)
