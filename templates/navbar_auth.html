@@ -1,11 +1,13 @@
 {% if user.is_authenticated %}
 <li>
-    <form action="{% url 'completed_todos' %}" method="GET"">
+    <form action="{% url 'completed_todos' %}" method="POST">
+        {% csrf_token %}
     <button type="submit" class="btn btn-primary">Completed</button>
     </form>
 </li>
 <li>
-    <form action="{% url 'create' %}" method="GET" style="margin-left: 20px;">
+    <form action="{% url 'create' %}" method="POST" style="margin-left: 20px;">
+        {% csrf_token %}
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
 </li>

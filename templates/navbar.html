@@ -24,11 +24,9 @@
 
         {% else %}
             <form action="{% url 'login_v' %}" method="GET">
-                {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
             <form action="{% url 'register' %}" method="GET">
-                {% csrf_token %}
                 <button type="submit" class="btn btn-primary" style="margin-left: 10px">Register</button>
             </form>
         {% endif %}
