@@ -6,8 +6,7 @@
     </form>
 </li>
 <li>
-    <form action="{% url 'create' %}" method="POST" style="margin-left: 20px;">
-        {% csrf_token %}
+    <form action="{% url 'create' %}" method="GET" style="margin-left: 20px;">
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
 </li>

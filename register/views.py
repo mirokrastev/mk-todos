@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 
 
 def register_view(request):
@@ -30,9 +30,8 @@ def login_view(request):
             return redirect('home')
 
         error = 'Incorrect username or password! Please try again!'
-    form = AuthenticationForm()
 
-    return render(request, 'register/login.html', {'form': form, 'error': error})
+    return render(request, 'register/login.html', {'error': error})
 
 
 def logout_view(request):

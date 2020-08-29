@@ -10,7 +10,14 @@
     <div class="container text-center">
         <form method="POST">
             {% csrf_token %}
-            {{ task.as_p }}
+{#            {{ task.as_p }}#}
+{#            {{ task.title }}<br>#}
+{#            {{ task.memo }}<br>#}
+{#            {{ task.important }}<br>#}
+            {% for field in task.visible_fields %}
+                {{ field }}<br>
+            {% endfor %}
+            <br>
             <button type="submit" class="btn btn-info">Update</button>
         </form>
 

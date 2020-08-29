@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
-
-{% block title %}
-<title>Login</title>
-{% endblock title %}
+{% load static %}
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'register/login_style.css' %}">
+{% endblock links %}
+{% block title %}<title>Login</title>{% endblock title %}
 
 {% block content %}
-<br>
-<div class="container text-center">
-    {% if error %}
-        <h3>{{ error }}</h3>
-    {% endif %}
-    <form method="POST" class="form-group">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <button type="submit" class="btn btn-success">Login</button>
-    </form>
+{% if error %}{{ error }}{% endif %}
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <form method="POST">
+            <input type="text" name="username" class="fadeIn second" placeholder="login">
+            <input type="password" name="password" class="fadeIn third" placeholder="password">
+            <input type="submit" class="fadeIn fourth" value="Log In">
+            {% csrf_token %}
+        </form>
+    </div>
 </div>
 {% endblock content %}
