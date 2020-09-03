@@ -1,16 +1,32 @@
 {% extends 'base.html' %}
-
-{% block title %}
-    <title>Registration</title>
-{% endblock title %}
+{% load static %}
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'register/register_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'register/tooltip_style.css' %}">
+{% endblock links %}
+{% block title %}<title>Sign Up</title>{% endblock title %}
 
 {% block content %}
-    <br>
-    <div style="margin: auto; width: 50%;">
-        <form method="POST" class="form-group">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Register</button>
-        </form>
+    <div class="wrapper fadeInDown">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        {% endfor %}
+        <div id="formContent">
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <span class="tool-tip">
+                        <i class="tool-tip__icon">i</i>
+                        <i class="tool-tip__info">{{ field.help_text }}</i>
+                        </span>
+                    {% endif %}
+                {% endfor %}
+                <input type="submit" class="fadeIn fourth" value="Sign Up">
+            </form>
+        </div>
     </div>
 {% endblock content %}
