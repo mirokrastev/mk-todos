@@ -1,20 +1,23 @@
 {% extends 'base.html' %}
-
-{% block title %}
-<title>Create new Todo</title>
-{% endblock title %}
-
+{% load static %}
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'todolist/todo_style.css' %}">
+{% endblock links %}
+{% block title %}<title>Create new Todo</title>{% endblock title %}
 
 {% block content %}
-<div class="container text-center">
-    <br>
-    {% if error %}
-        <h3>{{ error }}</h3>
-    {% endif %}
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Create</button>
-    </form>
+<div class="wrapper fadeInDown">
+    {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+    <div id="formContent">
+        <form method="POST">
+            {% for field in form %}
+                {% if field.name != 'important' %}{{ field }}<br>
+                {% else %}<a>Important: </a>{{ field }}<br>
+                {% endif %}
+            {% endfor %}
+            {% csrf_token %}
+            <input type="submit" class="input_button" value="Create">
+        </form>
+    </div>
 </div>
 {% endblock content %}

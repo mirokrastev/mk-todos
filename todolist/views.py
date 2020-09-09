@@ -59,16 +59,21 @@ def create_todo_view(request):
 @login_required
 def detailed_todo_view(request, task_pk):
     task = get_object(request, task_pk)
+    error = None
+
     if not task:
         return home_view(request, message='Invalid task.')
 
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
-        form.save()
-        return home_view(request)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+        error = 'Please submit only valid data.'
 
     task_paragraph = TaskForm(instance=task)
-    return render(request, 'todolist/detailed_todo.html', {'object': task, 'task': task_paragraph})
+    return render(request, 'todolist/detailed_todo.html', {'object': task,
+                                                           'task': task_paragraph, 'error': error})
 
 
 @login_required
