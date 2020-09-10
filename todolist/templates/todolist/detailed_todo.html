@@ -19,10 +19,17 @@
             <button type="submit" class="btn btn-primary">Update</button>
         </form>
         <br>
-        <form method="POST" action="{% url 'complete_todo' object.id %}">
-            <button type="submit" class="btn btn-primary">Complete</button>
-            {% csrf_token %}
-        </form>
+        {% if not object.date_completed %}
+            <form method="POST" action="{% url 'complete_todo' object.id %}">
+                <button type="submit" class="btn btn-primary">Complete</button>
+                {% csrf_token %}
+            </form>
+        {% else %}
+            <form method="POST" action="{% url 'reopen_todo' object.id %}">
+                <button type="submit" class="btn btn-primary">Reopen</button>
+                {% csrf_token %}
+            </form>
+        {% endif %}
         <br>
         <form method="POST" action="{% url 'delete_todo' object.id %}">
             <button type="submit" class="btn btn-danger">Delete</button>

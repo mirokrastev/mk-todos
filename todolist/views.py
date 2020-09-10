@@ -57,9 +57,8 @@ def create_todo_view(request):
 
 
 @login_required
-def detailed_todo_view(request, task_pk):
+def detailed_todo_view(request, task_pk, error=None):
     task = get_object(request, task_pk)
-    error = None
 
     if not task:
         return home_view(request, message='Invalid task.')
@@ -87,6 +86,19 @@ def complete_todo_view(request, task_pk):
         task.save()
         return home_view(request, message=f'You completed task {task.title}!')
     return redirect(home_view)
+
+
+@login_required
+def reopen_todo_view(request, task_pk):
+    task = get_object(request, task_pk)
+    if not task:
+        return home_view(request, message='Invalid task.')
+
+    if request.method == 'POST':
+        task.date_completed = None
+        task.save()
+        return home_view(request, message=f'You reopened task {task.title}!')
+    return detailed_todo_view(request, task_pk, error='Please submit only valid data.')
 
 
 @login_required
