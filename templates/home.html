@@ -3,42 +3,25 @@
 
 {% block content %}
 <div class="container text-center">
-    {% if message %}
-        <br>
-        <h3>{{ message }}</h3>
-    {% endif %}
-
+    {% if message %}<br><h3>{{ message }}</h3>{% endif %}
     <br>
-
     {% for task in todos %}
-        {% if task.is_first %}
-            {% include 'sort.html' %}
-        {% endif %}
-
+        {% if task.is_first %}{% include 'todolist/sort.html' %}{% endif %}
         {% if task.important %}
             <a href="{% url 'detailed_todo' task.id %}" class="btn btn-warning">
-            <b>{{ task.title }}</b>
-
+            <b>{{ task.title }}</b></a>
         {% else %}
             <a href="{% url 'detailed_todo' task.id %}" class="btn btn-info">
-            {{ task.title }}
+            {{ task.title }}</a>
         {% endif %}
-
-        </a>
-        {{ task.date_created|date:'j-n-Y H:i' }}
-        <br>
-        {{ task.memo|truncatechars:50 }}
-        <br><hr>
+        {{ task.date_created|date:'j-n-Y H:i' }}<br>
+        {{ task.memo|truncatechars:50 }}<br><hr>
     {% endfor %}
-
     {% if user.is_authenticated %}
         {% if not todos %}
-            <div>
-                <h4>Congrats, you don't have any tasks!</h4>
-                <p>Go ahead and create one, if you have! </p>
-            </div>
+            <h4>Congrats, you don't have any tasks!</h4>
+            <p>Go ahead and create one, if you have! </p>
         {% endif %}
-
     {% else %}
         <h3>Welcome to my Todo site!</h3>
         <h3>You need to be registered to start creating your todos! :)</h3>

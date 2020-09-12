@@ -7,12 +7,10 @@
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
           crossorigin="anonymous">
     {% block links %}{% endblock links %}
-    {% block title %}
-    <title>Title</title>
-    {% endblock title %}
+    {% block title %}<title>Title</title>{% endblock title %}
 </head>
 <body>
-{% include 'navbar.html' %}
+{% include 'navbar/navbar.html' %}
 {% block content %}{% endblock content %}
 </body>
 </html>
