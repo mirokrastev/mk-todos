@@ -25,7 +25,7 @@ body {
     text-align: center;
 }
 
-input[type=button], input[type=submit], input[type=reset]  {
+input[type=button], input[type=submit] {
     background-color: #56baed;
     border: none;
     color: white;
@@ -42,16 +42,15 @@ input[type=button], input[type=submit], input[type=reset]  {
     margin: 5px 20px 40px 20px;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
-    -ms-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
 }
 
-input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover  {
+input[type=button]:hover, input[type=submit]:hover {
     background-color: #39ace7;
 }
 
-input[type=text],input[type=password] {
+input[type=text], input[type=email], input[type=password] {
     background-color: #f6f6f6;
     padding: 15px 32px;
     text-align: center;
@@ -62,14 +61,13 @@ input[type=text],input[type=password] {
     border: 2px solid #f6f6f6;
     -webkit-transition: all 0.5s ease-in-out;
     -moz-transition: all 0.5s ease-in-out;
-    -ms-transition: all 0.5s ease-in-out;
     -o-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out;
     -webkit-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
 }
 
-input[type=text], input[type=password]:focus {
+input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
     background-color: #fff;
     border-bottom: 2px solid #5fbae9;
 }

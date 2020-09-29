@@ -28,7 +28,7 @@ def get_object(request, task_pk):
 
 @login_required
 def search_view(request):
-    word = request.GET['search']
+    word = request.GET['q']
     todos = Task.objects.filter(user=request.user, title__icontains=word)
     return render(request, 'home.html', {'todos': todos})
 

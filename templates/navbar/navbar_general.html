@@ -1,7 +1,7 @@
 {% if user.is_authenticated %}
     <form class="form-inline mr-auto" method="GET" action="{% url 'search' %}">
         <input class="form-control mr-sm-2" type="text"
-               placeholder="Search" name="search">
+               placeholder="Search" name="q">
         <input class="btn btn-unique btn-rounded btn-sm my-0"
                type="submit" value="Search">
     </form>

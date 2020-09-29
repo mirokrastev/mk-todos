@@ -1,6 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from .forms import RegisterForm
+from django.http import Http404
 
 
 def register_view(request):
@@ -34,12 +36,10 @@ def login_view(request):
     return render(request, 'register/login.html', {'error': error})
 
 
+@login_required
 def logout_view(request):
-    if not request.user.is_authenticated:
-        return render(request, 'home.html', {'message': 'You are not logged in!'})
+    if not request.method == 'POST':
+        return Http404
 
-    if request.method == 'POST':
-        logout(request)
-        return redirect('home')
-
-    return render(request, 'home.html', {'message': 'Please use the Logout button'})
+    logout(request)
+    return redirect('home')
