@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block links %}
-    <link rel="stylesheet" type="text/css" href="{% static 'register/authentication_style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'register/tooltip_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/authentication_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tooltip_style.css' %}">
 {% endblock links %}
-{% block title %}<title>Sign Up</title>{% endblock title %}
+{% block title %}<title>None</title>{% endblock title %}
 
 {% block content %}
     <div class="wrapper fadeInDown">
@@ -15,7 +15,6 @@
         {% endfor %}
         <div id="formContent">
             <form method="POST">
-                {% csrf_token %}
                 {% for field in form %}
                     {{ field }}
                     {% if field.help_text %}
@@ -25,7 +24,9 @@
                         </span>
                     {% endif %}
                 {% endfor %}
-                <input type="submit" class="fadeIn fourth" value="Sign Up">
+                <br>
+                <input type="submit" class="fadeIn first" value="{{ button_value }}">
+                {% csrf_token %}
             </form>
         </div>
     </div>

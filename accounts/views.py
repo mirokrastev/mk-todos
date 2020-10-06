@@ -1,13 +1,14 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from .forms import RegisterForm
+from .forms import CustomUserCreationForm, CustomSetPasswordForm
 from django.http import Http404
 
 
 def register_view(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
 
         if form.is_valid():
             form.save()
@@ -16,9 +17,10 @@ def register_view(request):
             login(request, form)
             return redirect('home')
     else:
-        form = RegisterForm()
+        form = CustomUserCreationForm()
 
-    return render(request, 'register/register.html', {'form': form})
+    context = {'form': form, 'button_value': 'Sign Up'}
+    return render(request, 'accounts/register.html', context)
 
 
 def login_view(request):
@@ -33,7 +35,7 @@ def login_view(request):
 
         error = 'Incorrect username or password! Please try again!'
 
-    return render(request, 'register/login.html', {'error': error})
+    return render(request, 'accounts/login.html', {'error': error})
 
 
 @login_required
@@ -43,3 +45,11 @@ def logout_view(request):
 
     logout(request)
     return redirect('home')
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    form_class = CustomSetPasswordForm
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.extra_context = {'button_value': 'Reset'}

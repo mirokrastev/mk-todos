@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block links %}
-    <link rel="stylesheet" type="text/css" href="{% static 'register/authentication_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/authentication_style.css' %}">
 {% endblock links %}
 {% block title %}<title>Login</title>{% endblock title %}
 
@@ -12,6 +12,8 @@
         <form method="POST">
             <input type="text" name="username" class="fadeIn second" placeholder="login">
             <input type="password" name="password" class="fadeIn third" placeholder="password">
+            <br>
+            <p>Forgot your password? Reset <a href="{% url 'password_reset' %}">here</a></p>
             <input type="submit" class="fadeIn fourth" value="Log In">
             {% csrf_token %}
         </form>

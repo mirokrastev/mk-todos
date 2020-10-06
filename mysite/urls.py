@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from register.views import register_view, login_view, logout_view
 from todolist.views import home_view, search_view
 
 urlpatterns = [
@@ -23,12 +22,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Auth
-    path('register/', register_view, name='register'),
-    path('login/', login_view, name='login_v'),
-    path('logout/', logout_view, name='logout_v'),
+    path('accounts/', include('accounts.urls')),
 
     # Todos
-    path('', home_view, name='home'),
     path('task/', include('todolist.urls')),
+
+    # Home
+    path('', home_view, name='home'),
     path('search/', search_view, name='search')
 ]
