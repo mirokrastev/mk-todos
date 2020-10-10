@@ -1,3 +1,5 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/gear_style.css' %}">
 {% if user.is_authenticated %}
     <form class="form-inline mr-auto" method="GET" action="{% url 'search' %}">
         <input class="form-control mr-sm-2" type="text"
@@ -10,6 +12,14 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-danger" style="margin-left: 50px">Logout</button>
     </form>
+    <div class="dropdown">
+        <span class="gear">&#9881;</span>
+        <div class="dropdown-content">
+            <form action="{% url 'password_change' %}">
+                <button class="btn btn-primary" style="border-radius: 10px;">Change Password</button>
+            </form>
+        </div>
+    </div>
 {% else %}
     <form action="{% url 'login_v' %}" method="GET">
         <button type="submit" class="btn btn-primary">Login</button>

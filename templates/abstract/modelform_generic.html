@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block links %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/authentication_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/modelform_style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/tooltip_style.css' %}">
 {% endblock links %}
 {% block title %}<title>None</title>{% endblock title %}
@@ -9,12 +9,10 @@
 {% block content %}
     <div class="wrapper fadeInDown">
         {% for field in form %}
-            {% for error in field.errors %}
-                <div class="alert alert-danger">{{ error }}</div>
-            {% endfor %}
+            {% for error in field.errors %}<div class="alert alert-danger">{{ error }}</div>{% endfor %}
         {% endfor %}
         <div id="formContent">
-            <form method="POST">
+            <form method="POST" autocomplete="off">
                 {% for field in form %}
                     {{ field }}
                     {% if field.help_text %}
@@ -25,7 +23,7 @@
                     {% endif %}
                 {% endfor %}
                 <br>
-                <input type="submit" class="fadeIn first" value="{{ button_value }}">
+                <input type="submit" class="fadeIn first input_button" value="{{ button_value }}">
                 {% csrf_token %}
             </form>
         </div>
