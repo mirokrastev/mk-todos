@@ -22,6 +22,7 @@
             <h4>Congrats, you don't have any tasks!</h4>
             <p>Go ahead and create one, if you have! </p>
         {% endif %}
+        {% include 'paginator/paginator.html' %}
     {% else %}
         <h3>Welcome to my Todo site!</h3>
         <h3>You need to be registered to start creating your todos! :)</h3>

@@ -1,0 +1,24 @@
+{% load url_helper %}
+{% if is_paginated %}
+    {% if todos.has_other_pages %}
+        <ul class="pagination">
+            {% if todos.has_previous %}
+                <li><a href="{% relative_url 'page' 1 request.GET.urlencode %}">&laquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in todos.paginator.page_range %}
+                {% if todos.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li><a href="{% relative_url 'page' i request.GET.urlencode %}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if todos.has_next %}
+                <li><a href="{% relative_url 'page' todos.paginator.num_pages request.GET.urlencode %}">&raquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+{% endif %}

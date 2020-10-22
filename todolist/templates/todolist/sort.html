@@ -1,13 +1,14 @@
 {% load static %}
+{% load url_helper %}
 <link rel="stylesheet" type="text/css" href="{% static 'todolist/sort_style.css' %}">
 <div class="dropdown">
     <button class="dropbtn">Sort by</button>
     <div class="dropdown-content">
-        <form method="GET">
-            <input class="btn btn-primary" value="ascending" name="order_by" type="submit">
-        </form>
-        <form method="GET">
-            <input class="btn btn-primary" value="descending" name="order_by" type="submit">
-        </form>
+        <a href="{% relative_url 'order_by' 'newest' request.GET.urlencode %}">
+            <button class="btn btn-primary">Newest</button>
+        </a><br>
+        <a href="{% relative_url 'order_by' 'oldest' request.GET.urlencode %}">
+            <button class="btn btn-primary">Oldest</button>
+        </a>
     </div>
 </div>

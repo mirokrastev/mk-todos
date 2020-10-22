@@ -3,20 +3,28 @@ from django.shortcuts import render, redirect
 from .forms import TaskForm
 from .models import Task
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 
-def home_view(request, isnull=True, message=None):
-    ORDER_BY = {'ascending': 'date_created', 'descending': '-date_created'}
-    todos = None
-
+def home_view(request, todos=None, isnull=True, message=None):
+    ORDER_BY = {'oldest': 'date_created', 'newest': '-date_created'}
     if request.user.is_authenticated:
-        order = ORDER_BY[request.GET.get('order_by', 'descending')]
-        todos = list(
-            Task.objects.filter(user=request.user, date_completed__isnull=isnull).order_by(order)
-        )
+        order = ORDER_BY[request.GET.get('order_by', 'newest')]
+        page = request.GET.get('page', 1)
+        if not todos:
+            todos = list(
+                Task.objects.filter(user=request.user, date_completed__isnull=isnull).order_by(order)
+            )
         if todos:
-            todos[0].is_first = True
-    return render(request, 'home.html', {'todos': todos, 'message': message})
+            paginator = Paginator(todos, 6)
+            todos = paginator.page(page)
+            todos.object_list[0].is_first = True
+
+    context = {
+        'todos': todos, 'message': message,
+        'is_paginated': True if todos else False
+    }
+    return render(request, 'home.html', context)
 
 
 def get_object(request, task_pk):
@@ -29,8 +37,10 @@ def get_object(request, task_pk):
 @login_required
 def search_view(request):
     word = request.GET['q']
-    todos = Task.objects.filter(user=request.user, title__icontains=word)
-    return render(request, 'home.html', {'todos': todos})
+    todos = list(
+        Task.objects.filter(user=request.user, title__icontains=word)
+    )
+    return home_view(request, todos)
 
 
 @login_required
