@@ -1,7 +1,6 @@
 {% if user.is_authenticated %}
 <li>
-    <form action="{% url 'completed_todos' %}" method="POST">
-        {% csrf_token %}
+    <form action="{% url 'completed_todos' %}" method="GET">
     <button type="submit" class="btn btn-primary">Completed</button>
     </form>
 </li>

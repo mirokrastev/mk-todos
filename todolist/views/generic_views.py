@@ -1,30 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .forms import TaskForm
-from .models import Task
+from django.http import Http404
+from django.shortcuts import redirect, render
+from todolist.forms import TaskForm
+from todolist.models import Task
 from django.utils import timezone
-from django.core.paginator import Paginator
-
-
-def home_view(request, todos=None, isnull=True, message=None):
-    ORDER_BY = {'oldest': 'date_created', 'newest': '-date_created'}
-    if request.user.is_authenticated:
-        order = ORDER_BY[request.GET.get('order_by', 'newest')]
-        page = request.GET.get('page', 1)
-        if not todos:
-            todos = list(
-                Task.objects.filter(user=request.user, date_completed__isnull=isnull).order_by(order)
-            )
-        if todos:
-            paginator = Paginator(todos, 6)
-            todos = paginator.page(page)
-            todos.object_list[0].is_first = True
-
-    context = {
-        'todos': todos, 'message': message,
-        'is_paginated': True if todos else False
-    }
-    return render(request, 'home.html', context)
 
 
 def get_object(request, task_pk):
@@ -32,20 +11,6 @@ def get_object(request, task_pk):
         return Task.objects.get(pk=task_pk, user=request.user)
     except (Task.DoesNotExist, ValueError):
         return None
-
-
-@login_required
-def search_view(request):
-    word = request.GET['q']
-    todos = list(
-        Task.objects.filter(user=request.user, title__icontains=word)
-    )
-    return home_view(request, todos)
-
-
-@login_required
-def completed_todos_view(request):
-    return home_view(request, isnull=False)
 
 
 @login_required
@@ -58,7 +23,6 @@ def create_todo_view(request):
             new = form.save(commit=False)
             new.user = request.user
             new.save()
-
             return redirect('home')
 
         error = 'Please submit only valid data.'
@@ -69,9 +33,8 @@ def create_todo_view(request):
 @login_required
 def detailed_todo_view(request, task_pk, error=None):
     task = get_object(request, task_pk)
-
     if not task:
-        return home_view(request, message='Invalid task.')
+        return Http404
 
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
@@ -89,25 +52,26 @@ def detailed_todo_view(request, task_pk, error=None):
 def complete_todo_view(request, task_pk):
     task = get_object(request, task_pk)
     if not task:
-        return home_view(request, message='Invalid task.')
+        return Http404
 
     if request.method == 'POST':
         task.date_completed = timezone.now()
         task.save()
-        return home_view(request, message=f'You completed task {task.title}!')
-    return redirect(home_view)
+        request.session['message'] = f'You completed task {task.title}!'
+    return redirect('home')
 
 
 @login_required
 def reopen_todo_view(request, task_pk):
     task = get_object(request, task_pk)
     if not task:
-        return home_view(request, message='Invalid task.')
+        return Http404
 
     if request.method == 'POST':
         task.date_completed = None
         task.save()
-        return home_view(request, message=f'You reopened task {task.title}!')
+        request.session['message'] = f'You reopened task {task.title}!'
+        return redirect('home')
     return detailed_todo_view(request, task_pk, error='Please submit only valid data.')
 
 
@@ -115,9 +79,9 @@ def reopen_todo_view(request, task_pk):
 def delete_todo_view(request, task_pk):
     task = get_object(request, task_pk)
     if not task:
-        return home_view(request, message='Invalid task.')
+        return Http404
 
     if request.method == 'POST':
         task.delete()
-        return home_view(request, message=f'You deleted task {task.title}!')
-    return redirect(home_view)
+        request.session['message'] = f'You deleted task {task.title}!'
+    return redirect('home')
