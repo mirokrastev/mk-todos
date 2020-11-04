@@ -1,6 +1,6 @@
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordResetConfirmView
-from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from .forms import CustomUserCreationForm, CustomSetPasswordForm, CustomPasswordChangeForm
 from django.http import Http404
