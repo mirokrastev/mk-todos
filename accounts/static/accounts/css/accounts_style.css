@@ -1,0 +1,5 @@
+.transparent {
+    border: transparent;
+    overflow: hidden;
+    resize: none;
+}

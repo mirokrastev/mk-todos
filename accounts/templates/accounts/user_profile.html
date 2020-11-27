@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if concrete %}
+    <title>My profile</title>
+    {% else %}
+    <title>{{ username }}'s profile</title>
+    {% endif %}
+{% endblock title %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{% static 'accounts/css/accounts_style.css' %}">
+{% endblock links %}
+
+{% block content %}
+<div class="text-center">
+    <br><br>
+    <div class="form-inline center justify-content-center">
+        <div class="card" style="width: 20rem;">
+            <h5 class="card-header">This is {% if concrete %}your{% else %}{{ username }}'s{% endif %} profile</h5><br>
+            {% include 'accounts/user-profile authentication/avatar_authentication.html' %}
+            <strong><u>bio:</u></strong>
+            {% include 'accounts/user-profile authentication/bio_authentication.html' %}
+            {% include 'accounts/user-profile authentication/email_authentication.html' %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'accounts/js/bio_hover.js' %}"></script>
+{% endblock scripts %}

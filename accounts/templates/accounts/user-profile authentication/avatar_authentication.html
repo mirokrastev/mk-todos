@@ -1,0 +1,13 @@
+{% if concrete %}
+    <form method="post" enctype="multipart/form-data">
+        <label for="avatar">
+            {% csrf_token %}
+            {{ instance.avatar }}
+            <img style="cursor: pointer" class="card-img-top"
+                 src="{{ profile.avatar.url }}" alt="{{ username }}'s avatar"/>
+        </label>
+    </form>
+{% else %}
+    <img class="card-img-top"
+         src="{{ profile.avatar.url }}" alt="{{ username }}'s avatar"/>
+{% endif %}

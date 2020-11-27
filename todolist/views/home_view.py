@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
 from todolist.views.mixins import GetRequestMixin, PaginatePageMixin
-from todolist.views.todo_creation.main import MakeGenericTodos, MakeSearchTodos
+from todolist.views.todo_creation.main import MakeGenericTodos
 
 
 class HomeView(GetRequestMixin, PaginatePageMixin, View):
@@ -20,7 +20,7 @@ class HomeView(GetRequestMixin, PaginatePageMixin, View):
 
         context = {
             'todos': self.todos,
-            'is_paginated': True if self.todos else False,
+            'is_paginated': bool(self.todos),
             'message': message
         }
         return render(request, 'home.html', context)
@@ -30,23 +30,15 @@ class HomeView(GetRequestMixin, PaginatePageMixin, View):
         return self.get(request)
 
     def authorised_action(self):
-        page, order, _ = self.make_query_params()
-
-        todos = self.paginate(MakeGenericTodos.make_todos(self, order), page)
-        return todos
-
-
-class SearchTodosHomeView(LoginRequiredMixin, HomeView):
-    def authorised_action(self):
         page, order, word = self.make_query_params()
 
-        todos = self.paginate(MakeSearchTodos.make_todos(self, order, word), page)
+        todos = self.paginate(MakeGenericTodos.make_todos(self, order, word), page)
         return todos
 
 
 class CompletedTodosHomeView(LoginRequiredMixin, HomeView):
     def authorised_action(self):
-        page, order, _ = self.make_query_params()
+        page, order, word = self.make_query_params()
 
-        todos = self.paginate(MakeGenericTodos.make_todos(self, order, False), page)
+        todos = self.paginate(MakeGenericTodos.make_todos(self, order, word, is_null=False), page)
         return todos

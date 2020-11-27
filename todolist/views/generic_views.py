@@ -31,7 +31,7 @@ def create_todo_view(request):
 
 
 @login_required
-def detailed_todo_view(request, task_pk, error=None):
+def detailed_todo_view(request, task_pk, name, error=None):
     task = get_object(request, task_pk)
     if not task:
         return Http404
@@ -49,7 +49,7 @@ def detailed_todo_view(request, task_pk, error=None):
 
 
 @login_required
-def complete_todo_view(request, task_pk):
+def complete_todo_view(request, task_pk, name):
     task = get_object(request, task_pk)
     if not task:
         return Http404
@@ -62,7 +62,7 @@ def complete_todo_view(request, task_pk):
 
 
 @login_required
-def reopen_todo_view(request, task_pk):
+def reopen_todo_view(request, task_pk, name):
     task = get_object(request, task_pk)
     if not task:
         return Http404
@@ -76,7 +76,7 @@ def reopen_todo_view(request, task_pk):
 
 
 @login_required
-def delete_todo_view(request, task_pk):
+def delete_todo_view(request, task_pk, name):
     task = get_object(request, task_pk)
     if not task:
         return Http404

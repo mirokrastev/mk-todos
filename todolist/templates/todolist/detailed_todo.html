@@ -20,18 +20,18 @@
         </form>
         <br>
         {% if not object.date_completed %}
-            <form method="POST" action="{% url 'complete_todo' object.id %}">
+            <form method="POST" action="{% url 'complete_todo' object.id object.title %}">
                 <button type="submit" class="btn btn-primary">Complete</button>
                 {% csrf_token %}
             </form>
         {% else %}
-            <form method="POST" action="{% url 'reopen_todo' object.id %}">
+            <form method="POST" action="{% url 'reopen_todo' object.id object.title %}">
                 <button type="submit" class="btn btn-primary">Reopen</button>
                 {% csrf_token %}
             </form>
         {% endif %}
         <br>
-        <form method="POST" action="{% url 'delete_todo' object.id %}">
+        <form method="POST" action="{% url 'delete_todo' object.id object.title %}">
             <button type="submit" class="btn btn-danger">Delete</button>
             {% csrf_token %}
         </form>

@@ -1,6 +1,8 @@
 {% load static %}
 {% load url_helper %}
+{% block links %}
 <link rel="stylesheet" type="text/css" href="{% static 'todolist/sort_style.css' %}">
+{% endblock links %}
 <div class="dropdown">
     <button class="dropbtn">Sort by</button>
     <div class="dropdown-content">

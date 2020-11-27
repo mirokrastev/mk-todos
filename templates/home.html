@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
+
 {% block title %}<title>Home</title>{% endblock title %}
 
 {% block content %}
 <div class="container text-center">
-    {% if message %}<br><h3>{{ message }}</h3>{% endif %}
+    {% if message %}<br><div class="alert alert-primary">{{ message }}</div>{% endif %}
     <br>
     {% for task in todos %}
         {% if task.is_first %}{% include 'todolist/sort.html' %}{% endif %}
         {% if task.important %}
-            <a href="{% url 'detailed_todo' task.id %}" class="btn btn-warning">
+            <a href="{% url 'detailed_todo' task.id task.title %}" class="btn btn-warning">
             <b>{{ task.title }}</b></a>
         {% else %}
-            <a href="{% url 'detailed_todo' task.id %}" class="btn btn-info">
+            <a href="{% url 'detailed_todo' task.id task.title %}" class="btn btn-info">
             {{ task.title }}</a>
         {% endif %}
         {{ task.date_created|date:'j-n-Y H:i' }}<br>

@@ -4,3 +4,12 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
+
+
+class UserProfile(models.Model):
+    bio = models.CharField(max_length=150, null=True, blank=True)
+    avatar = models.ImageField(upload_to='images/user-profiles', default='/images/default-user-avatar.jpg')
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username

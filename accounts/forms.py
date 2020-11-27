@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser
+from .models import CustomUser, UserProfile
 from django.contrib.auth import forms as auth_forms
 
 
@@ -51,3 +51,18 @@ class CustomPasswordChangeForm(CustomSetPasswordForm, auth_forms.PasswordChangeF
                                                          'class': 'main_input',
                                                          'autocomplete': 'new-password'})
         self.fields['old_password'].help_text = 'Enter your old password'
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('bio', 'avatar')
+
+        widgets = {
+            'bio': forms.Textarea(attrs={'id': 'main-bio',
+                                         'class':'card-text transparent',
+                                         'rows': '0', 'cols': '0'}),
+
+            'avatar': forms.FileInput(attrs={'style': 'display: none;',
+                                             'id': 'avatar'}),
+        }

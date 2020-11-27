@@ -1,0 +1,10 @@
+{% if concrete %}
+    <div class="card-body" id="bio_id">
+        <form method="post">
+            {% csrf_token %}
+            {{ instance.bio }}
+        </form>
+    </div>
+{% else %}
+    {{ instance.bio }}
+{% endif %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser
+from .models import CustomUser, UserProfile
 
 
 class CustomUserFields(admin.ModelAdmin):
@@ -7,3 +7,4 @@ class CustomUserFields(admin.ModelAdmin):
 
 
 admin.site.register(CustomUser, CustomUserFields)
+admin.site.register(UserProfile)

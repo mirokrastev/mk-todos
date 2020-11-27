@@ -1,12 +1,11 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-static-top bg-dark">
     <div class="container text-center">
-        <a class="navbar-brand" href="{% url 'home' %}">Todos</a>
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active" style="margin-right: 30px;">
-                <a class="nav-link" href="{% url 'home' %}">Home</a>
-            </li>
-            {% include 'navbar/navbar_auth.html' %}
-        </ul>
-        {% include 'navbar/navbar_general.html' %}
+    <a class="navbar-brand" href="{% url 'home' %}">Todo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    {% include 'navbar/main_actions.html' %}
+    {% include 'navbar/authenticated/search_bar.html' %}
+    {% include 'navbar/authenticated/profile_logout.html' %}
     </div>
 </nav>
