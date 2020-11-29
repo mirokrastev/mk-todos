@@ -22,7 +22,7 @@ from todolist.views.home_view import HomeView
 
 urlpatterns = [
     # Admin
-    path('admin/', admin.site.urls),
+    path('django-admin/', admin.site.urls),
 
     # Auth
     path('accounts/', include('accounts.urls')),
