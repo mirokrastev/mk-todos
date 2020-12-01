@@ -106,3 +106,12 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         context['button_value'] = 'Reset'
 
         return context
+
+
+def change_theme(request, previous_url):
+    if request.user.is_authenticated:
+        user = UserProfile.objects.get(user=request.user)
+        user.dark_mode = not user.dark_mode
+        user.save()
+        return redirect(previous_url)
+    raise Http404

@@ -1,0 +1,11 @@
+{% load url_helper %}
+
+{% if todos.has_next %}
+    <li class="page-item">
+        <a class="page-link" href="{% relative_url 'page' todos.next_page_number request.GET.urlencode %}">Next</a>
+    </li>
+{% else %}
+    <li class="disabled page-item">
+        <a class="page-link">Next</a>
+    </li>
+{% endif %}

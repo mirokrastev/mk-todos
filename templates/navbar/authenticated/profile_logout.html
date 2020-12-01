@@ -9,7 +9,7 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="{% url 'my_profile' request.user.username %}">My profile</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'password_change' %}">Change password</a>
+                {% include 'navbar/authenticated/settings.html' %}
                 <div class="dropdown-divider"></div>
                 <form action="{% url 'logout_v' %}" method="POST">
                 {% csrf_token %}

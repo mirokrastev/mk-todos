@@ -9,6 +9,8 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login_v'),
     path('logout/', login_required(LogOutView.as_view()), name='logout_v'),
 
+    path('theme/<path:previous_url>', change_theme, name='change_theme'),
+
     path('<str:username>', UserProfileView.as_view(), name='my_profile'),
 
     path('password/change/', login_required(PasswordChange.as_view()), name='password_change'),

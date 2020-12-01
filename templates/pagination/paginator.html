@@ -1,0 +1,23 @@
+{% load url_helper %}
+
+{% if is_paginated %}
+    {% if todos.has_other_pages %}
+        <ul class="pagination">
+            {% include 'pagination/previous_page.html' %}
+
+            {% for page in todos.paginator.page_range %}
+                {% if todos.number == page %}
+                    <li class="active page-item">
+                        <a class="page-link">{{ page }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% relative_url 'page' page request.GET.urlencode %}">{{ page }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% include 'pagination/next_page.html' %}
+        </ul>
+    {% endif %}
+{% endif %}

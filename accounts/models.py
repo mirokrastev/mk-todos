@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
 class UserProfile(models.Model):
     bio = models.CharField(max_length=150, null=True, blank=True)
     avatar = models.ImageField(upload_to='images/user-profiles', default='/images/default-user-avatar.jpg')
+    dark_mode = models.BooleanField(default=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
     @staticmethod
