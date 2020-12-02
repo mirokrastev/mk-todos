@@ -1,9 +1,10 @@
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.generic import CreateView, FormView
 from accounts.forms import LoginForm, CustomUserCreationForm
+from accounts.models import CustomUser
 
 
 class RegisterView(CreateView):
@@ -49,4 +50,20 @@ class LogOutView(View):
 
     def post(self, request):
         logout(self.request)
+        return redirect('home')
+
+
+class DeleteProfileView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.method not in ('GET', 'POST'):
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        return render(self.request, 'accounts/delete/profile_delete.html')
+
+    def post(self, request):
+        user = CustomUser.objects.get(username=self.request.user.username)
+        logout(self.request)
+        user.delete()
         return redirect('home')

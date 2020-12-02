@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Delete profile</title>{% endblock title %}
+
+{% block content %}
+    <br>
+    <div class="container text-center">
+        <h4>This is a warning! If you click Delete your profile will be deleted forever.</h4>
+        <br>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="history.back();">Go back</button>
+        </div>
+
+        <div class="btn-group">
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
