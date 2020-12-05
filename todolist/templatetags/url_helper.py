@@ -4,13 +4,28 @@ register = template.Library()
 
 
 @register.simple_tag
-def relative_url(field_name, value, urlencode=''):
-    url = f'?{field_name}={value}'
+def relative_url(querystring_key, querystring_value, urlencode=''):
+    querystring = f'{querystring_key}={querystring_value}'
+
     if urlencode:
         querystrings = urlencode.split('&')
-        filtered_querystring = [querystring for querystring in querystrings
-                                if querystring.split('=')[0] != field_name]
+        filtered_querystring = []
+        to_append_new_querystring = True
+
+        for old_querystring in querystrings:
+            if old_querystring.split('=')[0] == querystring_key:
+                filtered_querystring.append(querystring)
+                to_append_new_querystring = False
+                continue
+            filtered_querystring.append(old_querystring)
+
         encoded_querystring = '&'.join(filtered_querystring)
-        if encoded_querystring:
-            url = f'?{encoded_querystring}&{url.replace("?", "")}'
-    return url
+
+        mapper = {
+            True: f'{encoded_querystring}&{querystring}',
+            False: f'{encoded_querystring}',
+        }
+
+        querystring = mapper[to_append_new_querystring]
+
+    return f'?{querystring}'

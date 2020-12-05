@@ -2,7 +2,7 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.views.generic import CreateView, FormView
+from django.views.generic import CreateView, FormView, DeleteView
 from accounts.forms import LoginForm, CustomUserCreationForm
 from accounts.models import CustomUser
 

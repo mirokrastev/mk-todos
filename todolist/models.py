@@ -3,7 +3,7 @@ from accounts.models import CustomUser
 
 
 class Task(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, verbose_name='Task')
     memo = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(null=True, blank=True)

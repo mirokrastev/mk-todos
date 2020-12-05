@@ -28,7 +28,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
 
     # Todos
-    path('task/', include('todolist.urls')),
+    path('todo/', include('todolist.urls')),
 
     # Home
     path('', HomeView.as_view(), name='home'),

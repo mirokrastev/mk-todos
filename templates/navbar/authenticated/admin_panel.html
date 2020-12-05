@@ -1,0 +1,3 @@
+{% if request.user.is_superuser %}
+<a class="dropdown-item" href="/django-admin">Admin panel</a>
+{% endif %}

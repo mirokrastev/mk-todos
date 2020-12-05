@@ -3,39 +3,41 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.generic import FormView
+from accounts.mixins import GetUsernameMixin
 from accounts.models import CustomUser, UserProfile
 from accounts.forms import CustomPasswordChangeForm, CustomSetPasswordForm, UserProfileForm
 from accounts.common import upload_new_picture
 
 
-class UserProfileView(View):
+class UserProfileView(GetUsernameMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.user = None
-        self.profile = None
-        self.concrete = None
+        self.user: CustomUser = None
+        self.username: str = None
+        self.profile: UserProfile = None
+        self.concrete: bool = None
 
     def dispatch(self, request, *args, **kwargs):
-        username = kwargs.get('username', None)
+        self.username = self.get_username(kwargs)
+
         try:
-            self.user = CustomUser.objects.get(username=username)
+            self.user = CustomUser.objects.get(username=self.username)
             self.profile = UserProfile.objects.get(user=self.user)
-            self.concrete = self.request.user.username == username
+            self.concrete = self.request.user.username == self.username
         except (CustomUser.DoesNotExist, UserProfile.DoesNotExist):
             raise Http404
 
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        username = kwargs.get('username', None)
-        context = self.get_context_data(username=username, inst=self.profile)
-        context['instance'] = self.alter_form(context)
+        print(self.request.method)
+        context = self.get_context_data(inst=self.profile)
+        context['instance'] = self.alter_form(context['instance'])
 
         return render(self.request, 'accounts/user_profile.html', context)
 
     def post(self, request, *args, **kwargs):
-        username = kwargs.get('username', None)
         if not self.concrete:
             raise Http404
 
@@ -50,21 +52,19 @@ class UserProfileView(View):
 
         self.profile.save()
 
-        return self.get(self.request, username, *args, **kwargs)
+        return self.get(self.request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        (username, inst) = (kwargs.get('username', None), kwargs.get('inst', None))
+        inst = kwargs.get('inst', None)
 
-        return {'username': username,
+        return {'username': self.username,
                 'profile': self.profile, 'instance': UserProfileForm(instance=inst),
                 'concrete': self.concrete}
 
-    def alter_form(self, context):
-        (instance, username) = (context['instance'], context['username'])
-
+    def alter_form(self, instance):
         dd = {
-            True: f'How do you feel today, {username} :)',
-            False: f'{username} has no bio.',
+            True: f'How do you feel today, {self.username} :)',
+            False: f'{self.username} has no bio.',
         }
 
         if not self.concrete:
@@ -104,7 +104,6 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['button_value'] = 'Reset'
-
         return context
 
 

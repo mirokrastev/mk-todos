@@ -66,9 +66,12 @@ class CustomPasswordChangeForm(CustomSetPasswordForm, auth_forms.PasswordChangeF
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['old_password'].widget.attrs.update({'placeholder': 'Enter your old password',
-                                                         'class': 'main_input',
-                                                         'autocomplete': 'new-password'})
+        self.fields['old_password'].widget.attrs.update(
+            {'placeholder': 'Enter your old password',
+             'class': 'main_input',
+             'autocomplete': 'new-password'}
+        )
+
         self.fields['old_password'].help_text = 'Enter your old password'
 
 
@@ -78,12 +81,16 @@ class UserProfileForm(forms.ModelForm):
         fields = ('bio', 'avatar')
 
         widgets = {
-            'bio': forms.Textarea(attrs={'id': 'main-bio',
-                                         'class': 'card-text transparent',
-                                         'rows': '0', 'cols': '0'}),
+            'bio': forms.Textarea(
+                attrs={'id': 'main-bio',
+                       'class': 'card-text transparent',
+                       'rows': '0', 'cols': '0'}
+            ),
 
-            'avatar': forms.FileInput(attrs={'style': 'display: none;',
-                                             'id': 'avatar'}),
+            'avatar': forms.FileInput(
+                attrs={'style': 'display: none;',
+                       'id': 'avatar'}
+            ),
         }
 
 

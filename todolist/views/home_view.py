@@ -1,10 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
-from todolist.views.mixins import GetRequestMixin, PaginatePageMixin
+from todolist.mixins import GetRequestMixin, PaginatePageMixin
 from todolist.views.todo_creation.main import MakeGenericTodos
 
 
+# TODO: LOOK INIT.PY IMPORTS AND MAKE IT AS ACCOUNTS
 class HomeView(GetRequestMixin, MakeGenericTodos, PaginatePageMixin, View):
     ORDER_BY = {'oldest': 'date_created', 'newest': '-date_created'}
 
@@ -36,7 +36,7 @@ class HomeView(GetRequestMixin, MakeGenericTodos, PaginatePageMixin, View):
         return todos
 
 
-class CompletedTodosHomeView(LoginRequiredMixin, HomeView):
+class CompletedTodosHomeView(HomeView):
     def authorised_action(self):
         page, order, word = self.make_query_params()
 

@@ -1,3 +1,7 @@
-<a class="dropdown-item" href="{% url 'change_theme' request.get_full_path %}">Change theme</a>
+{% if dark_mode %}
+    <a class="dropdown-item" href="{% url 'change_theme' request.get_full_path %}">Light mode</a>
+{% else %}
+    <a class="dropdown-item" href="{% url 'change_theme' request.get_full_path %}">Dark mode</a>
+{% endif %}
 <a class="dropdown-item" href="{% url 'password_change' %}">Change password</a>
 <a class="dropdown-item" href="{% url 'delete_profile' %}" style="color: red;">Delete profile</a>

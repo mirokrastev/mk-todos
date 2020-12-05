@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block links %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/modelform_style.css' %}">
 {% endblock links %}
+
 {% block title %}<title>{{ object.title }}</title>{% endblock title %}
 
 {% block content %}
@@ -10,31 +12,12 @@
     {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
     <div id="formContent">
         <form method="POST">
-            {% for field in task %}
-            {% if field.name != 'important' %}{{ field }}<br>
-            {% else %}<a>Important: </a>{{ field }}<br>
-            {% endif %}
-            {% endfor %}
-            {% csrf_token %}<br>
-            <button type="submit" class="btn btn-primary">Update</button>
-        </form>
-        <br>
-        {% if not object.date_completed %}
-            <form method="POST" action="{% url 'complete_todo' object.id object.title %}">
-                <button type="submit" class="btn btn-primary">Complete</button>
-                {% csrf_token %}
-            </form>
-        {% else %}
-            <form method="POST" action="{% url 'reopen_todo' object.id object.title %}">
-                <button type="submit" class="btn btn-primary">Reopen</button>
-                {% csrf_token %}
-            </form>
-        {% endif %}
-        <br>
-        <form method="POST" action="{% url 'delete_todo' object.id object.title %}">
-            <button type="submit" class="btn btn-danger">Delete</button>
+            {{ form.as_p }}
             {% csrf_token %}
+            <button class="btn btn-primary">Update</button>
         </form>
+        <br>
+        {% include 'todolist/todo_actions.html' %}
     </div>
 </div>
 {% endblock content %}
