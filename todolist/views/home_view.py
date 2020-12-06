@@ -1,44 +1,40 @@
 from django.shortcuts import render
 from django.views import View
-from todolist.mixins import GetRequestMixin, PaginatePageMixin
-from todolist.views.todo_creation.main import MakeGenericTodos
+from todolist.mixins import GetRequestsMixin, PaginateObjectMixin, FilterTodosMixin
 
 
-# TODO: LOOK INIT.PY IMPORTS AND MAKE IT AS ACCOUNTS.
-class HomeView(GetRequestMixin, MakeGenericTodos, PaginatePageMixin, View):
-    ORDER_BY = {'oldest': 'date_created', 'newest': '-date_created'}
-
+class HomeView(GetRequestsMixin, FilterTodosMixin, PaginateObjectMixin, View):
     def __init__(self):
         super().__init__()
         self.todos = None
+        self.message = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.todos = self.get_todos()
+        self.message = self.request.session.pop('message', None)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        message = self.request.session.pop('message', None)
-
-        if self.request.user.is_authenticated:
-            self.todos = self.authorised_action()
-
-        context = {
-            'todos': self.todos,
-            'is_paginated': bool(self.todos),
-            'message': message,
-        }
+        context = self.get_context_data()
         return render(request, 'home.html', context)
 
-    def post(self, request):
-        self.request.method = 'GET'
-        return self.get(request)
+    def get_context_data(self):
+        return {
+            'todos': self.todos,
+            'is_paginated': bool(self.todos),
+            'message': self.message
+        }
 
-    def authorised_action(self):
+    def get_todos(self):
         page, order, word = self.make_query_params()
-
-        todos = self.paginate(self.make_todos(order, word), page)
+        obj = self.filter_todos(order, word)
+        todos = self.paginate(obj, page)
         return todos
 
 
 class CompletedTodosHomeView(HomeView):
-    def authorised_action(self):
+    def get_todos(self):
         page, order, word = self.make_query_params()
-
-        todos = self.paginate(self.make_todos(order, word, is_null=False), page)
+        obj = self.filter_todos(order, word, is_null=False)
+        todos = self.paginate(obj, page)
         return todos

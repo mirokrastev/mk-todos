@@ -3,26 +3,41 @@ from django.http import Http404
 from todolist.models import Task
 
 
-class GetRequestMixin:
+class GetRequestsMixin:
+    ORDER_BY = {'oldest': 'date_created', 'newest': '-date_created'}
+
     def make_query_params(self):
         page = self.request.GET.get('page', 1)
-        order = self.__class__.ORDER_BY[self.request.GET.get('order_by', 'newest')]
+        order = self.ORDER_BY[self.request.GET.get('order_by', 'newest')]
         word = self.request.GET.get('q', None)
 
         return page, order, word
 
 
-class PaginatePageMixin:
-    def paginate(self, todos, page):
-        if not todos:
+class PaginateObjectMixin:
+    def paginate(self, obj, page):
+        if not obj:
             return None
-        paginator = Paginator(todos, 6)
-        todos = paginator.page(page)
-        todos.object_list[0].is_first = True
+        paginator = Paginator(obj, per_page=6, orphans=1)
+        paginated_obj = paginator.page(page)
+        paginated_obj.object_list[0].is_first = True
+        return paginated_obj
+
+
+class FilterTodosMixin:
+    def filter_todos(self, order, word, is_null=True):
+        if not self.request.user.is_authenticated:
+            return None
+
+        params = {'date_completed__isnull': is_null}
+        if word:
+            params.update({'title__icontains': word})
+
+        todos = Task.objects.filter(user=self.request.user, **params).order_by(order)
         return todos
 
 
-class GetTodoMixin:
+class GetSingleTodoMixin:
     def get_object(self):
         try:
             return Task.objects.get(pk=self.kwargs['task_pk'], user=self.request.user)
@@ -30,7 +45,7 @@ class GetTodoMixin:
             return None
 
 
-class MakeGenericTodoMixin(GetTodoMixin):
+class InitializeTodoMixin(GetSingleTodoMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.task = None

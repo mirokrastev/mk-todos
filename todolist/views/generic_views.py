@@ -4,7 +4,7 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView
 from todolist.forms import TaskForm
 from django.utils import timezone
-from todolist.mixins import GetTodoMixin, MakeGenericTodoMixin
+from todolist.mixins import GetSingleTodoMixin, InitializeTodoMixin
 
 
 class CreateTodo(CreateView):
@@ -19,7 +19,7 @@ class CreateTodo(CreateView):
         return redirect('home')
 
 
-class CompleteTodo(MakeGenericTodoMixin, View):
+class CompleteTodo(InitializeTodoMixin, View):
     def post(self, request, *args, **kwargs):
         self.task.date_completed = timezone.now()
         self.task.save()
@@ -27,7 +27,7 @@ class CompleteTodo(MakeGenericTodoMixin, View):
         return redirect('home')
 
 
-class ReopenTodo(MakeGenericTodoMixin, View):
+class ReopenTodo(InitializeTodoMixin, View):
     def post(self, request, *args, **kwargs):
         self.task.date_completed = None
         self.task.date_created = timezone.now()
@@ -36,14 +36,14 @@ class ReopenTodo(MakeGenericTodoMixin, View):
         return redirect('home')
 
 
-class DeleteTodo(MakeGenericTodoMixin, View):
+class DeleteTodo(InitializeTodoMixin, View):
     def post(self, request, *args, **kwargs):
         self.task.delete()
         self.request.session['message'] = f'You deleted {self.task.title}!'
         return redirect('home')
 
 
-class DetailedTodo(GetTodoMixin, UpdateView):
+class DetailedTodo(GetSingleTodoMixin, UpdateView):
     form_class = TaskForm
     context_object_name = 'form'
     template_name = 'todolist/detailed_todo.html'
