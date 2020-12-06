@@ -6,18 +6,18 @@
         Manage Todos
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <a class="dropdown-item" href="{% url 'create' %}">Create new Todo</a>
+        <a class="dropdown-item" href="{% url 'todo:create' %}">Create new Todo</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'completed_todos' %}">View Completed Todos</a>
+        <a class="dropdown-item" href="{% url 'todo:completed_todos' %}">View Completed Todos</a>
     </div>
 {% else %}
     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Manage Account
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <a class="dropdown-item" href="{% url 'login_v' %}">Log in</a>
+        <a class="dropdown-item" href="{% url 'accounts:login_v' %}">Log in</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'register_v' %}">Register</a>
+        <a class="dropdown-item" href="{% url 'accounts:register_v' %}">Register</a>
     </div>
 {% endif %}
     </li>

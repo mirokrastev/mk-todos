@@ -4,17 +4,17 @@
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
         {% if not todo.date_completed %}
-            <form method="POST" action="{% url 'complete_todo' todo.id todo.title %}">
+            <form method="POST" action="{% url 'todo:complete_todo' todo.id todo.title %}">
                 <button class="dropdown-item">Complete</button>
                 {% csrf_token %}
             </form>
         {% else %}
-            <form method="POST" action="{% url 'reopen_todo' todo.id todo.title %}">
+            <form method="POST" action="{% url 'todo:reopen_todo' todo.id todo.title %}">
                 <button class="dropdown-item">Reopen</button>
                 {% csrf_token %}
             </form>
         {% endif %}
-        <form method="POST" action="{% url 'delete_todo' todo.id todo.title %}">
+        <form method="POST" action="{% url 'todo:delete_todo' todo.id todo.title %}">
             <button class="dropdown-item" style="color: red;">Delete</button>
             {% csrf_token %}
         </form>

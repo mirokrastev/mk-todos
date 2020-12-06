@@ -7,12 +7,12 @@
                 {{ user }}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{% url 'my_profile' request.user.username %}">My profile</a>
+                <a class="dropdown-item" href="{% url 'accounts:my_profile' request.user.username %}">My profile</a>
                 {% include 'navbar/authenticated/admin_panel.html' %}
                 <div class="dropdown-divider"></div>
                 {% include 'navbar/authenticated/settings.html' %}
                 <div class="dropdown-divider"></div>
-                <form action="{% url 'logout_v' %}" method="POST">
+                <form action="{% url 'accounts:logout_v' %}" method="POST">
                 {% csrf_token %}
                 <a style="cursor: pointer;" class="dropdown-item" onclick="parentNode.submit();">Log out</a>
                 </form>

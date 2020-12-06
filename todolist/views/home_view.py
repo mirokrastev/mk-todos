@@ -4,7 +4,7 @@ from todolist.mixins import GetRequestMixin, PaginatePageMixin
 from todolist.views.todo_creation.main import MakeGenericTodos
 
 
-# TODO: LOOK INIT.PY IMPORTS AND MAKE IT AS ACCOUNTS
+# TODO: LOOK INIT.PY IMPORTS AND MAKE IT AS ACCOUNTS.
 class HomeView(GetRequestMixin, MakeGenericTodos, PaginatePageMixin, View):
     ORDER_BY = {'oldest': 'date_created', 'newest': '-date_created'}
 

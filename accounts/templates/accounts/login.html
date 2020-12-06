@@ -13,7 +13,7 @@
             {% csrf_token %}
             {{ form }}
             <br>
-            <p>Forgot your password? Reset <a href="{% url 'password_reset' %}">here</a></p>
+            <p>Forgot your password? Reset <a href="{% url 'accounts:password_reset' %}">here</a></p>
             <input type="submit" class="fadeIn third input_button" value="Log In">
         </form>
     </div>

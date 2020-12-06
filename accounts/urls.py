@@ -4,6 +4,8 @@ from .forms import CustomPasswordResetForm
 from .views import *
 from django.contrib.auth import views as auth_views
 
+app_name = 'accounts'
+
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register_v'),
     path('login/', LoginView.as_view(), name='login_v'),
@@ -19,15 +21,16 @@ urlpatterns = [
 
     path('password/reset/', auth_views.PasswordResetView.as_view(
         template_name='accounts/reset/password_reset_form.html',
-        form_class=CustomPasswordResetForm),
+        email_template_name='accounts/reset/password_reset_email.html',
+        form_class=CustomPasswordResetForm,
+        success_url=reverse_lazy('accounts:password_reset_done')),
          name='password_reset'),
 
     path('password/reset/confirmation', auth_views.PasswordResetDoneView.as_view(
         template_name='accounts/reset/password_reset_done.html'),
          name='password_reset_done'),
 
-    path('password/reset/<uidb64>/<token>', CustomPasswordResetConfirmView.as_view(
-        template_name='accounts/reset/password_reset_confirm.html'),
+    path('password/reset/<uidb64>/<token>', CustomPasswordResetConfirmView.as_view(),
          name='password_reset_confirm'),
 
     path('password/reset/completed', auth_views.PasswordResetCompleteView.as_view(

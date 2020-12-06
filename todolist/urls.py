@@ -3,6 +3,8 @@ from todolist.views import generic_views as views
 from django.contrib.auth.decorators import login_required
 from todolist.views.home_view import CompletedTodosHomeView
 
+app_name = 'todo'
+
 urlpatterns = [
     path('create', login_required(views.CreateTodo.as_view()), name='create'),
     path('completed', login_required(CompletedTodosHomeView.as_view()), name='completed_todos'),

@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy
 from django.views import View
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.http import Http404
@@ -31,7 +32,6 @@ class UserProfileView(GetUsernameMixin, View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        print(self.request.method)
         context = self.get_context_data(inst=self.profile)
         context['instance'] = self.alter_form(context['instance'])
 
@@ -58,7 +58,8 @@ class UserProfileView(GetUsernameMixin, View):
         inst = kwargs.get('inst', None)
 
         return {'username': self.username,
-                'profile': self.profile, 'instance': UserProfileForm(instance=inst),
+                'profile': self.profile,
+                'instance': UserProfileForm(instance=inst),
                 'concrete': self.concrete}
 
     def alter_form(self, instance):
@@ -100,6 +101,8 @@ class PasswordChange(FormView):
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     form_class = CustomSetPasswordForm
+    template_name = 'accounts/reset/password_reset_confirm.html'
+    success_url = reverse_lazy('accounts:password_reset_complete')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

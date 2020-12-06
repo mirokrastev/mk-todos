@@ -25,10 +25,10 @@ urlpatterns = [
     path('django-admin/', admin.site.urls),
 
     # Auth
-    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
 
     # Todos
-    path('todo/', include('todolist.urls')),
+    path('todo/', include('todolist.urls', namespace='todo')),
 
     # Home
     path('', HomeView.as_view(), name='home'),

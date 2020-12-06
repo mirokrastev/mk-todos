@@ -9,10 +9,10 @@
     {% for task in todos %}
         {% if task.is_first %}{% include 'todolist/sort.html' %}{% endif %}
         {% if task.important %}
-            <a href="{% url 'detailed_todo' task.id task.title %}" class="btn btn-warning">
+            <a href="{% url 'todo:detailed_todo' task.id task.title %}" class="btn btn-warning">
             <b>{{ task.title }}</b></a>
         {% else %}
-            <a href="{% url 'detailed_todo' task.id task.title %}" class="btn btn-info">
+            <a href="{% url 'todo:detailed_todo' task.id task.title %}" class="btn btn-info">
             {{ task.title }}</a>
         {% endif %}
         {{ task.date_created|date:'j-n-Y H:i' }}<br>
