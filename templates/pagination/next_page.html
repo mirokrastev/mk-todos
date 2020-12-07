@@ -5,7 +5,7 @@
         <a class="page-link" href="{% relative_url 'page' todos.next_page_number request.GET.urlencode %}">Next</a>
     </li>
 {% else %}
-    <li class="disabled page-item">
+    <li class="page-item disabled">
         <a class="page-link">Next</a>
     </li>
 {% endif %}

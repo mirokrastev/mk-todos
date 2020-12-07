@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block links %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/modelform_style.css' %}">
 {% endblock links %}
+
 {% block title %}<title>Login</title>{% endblock title %}
 
 {% block content %}
@@ -12,10 +14,10 @@
         <form method="POST">
             {% csrf_token %}
             {{ form }}
-            <br>
-            <p>Forgot your password? Reset <a href="{% url 'accounts:password_reset' %}">here</a></p>
+            <br><br>
             <input type="submit" class="fadeIn third input_button" value="Log In">
         </form>
+        <small>Forgot your password? Reset <a href="{% url 'accounts:password_reset' %}">here</a></small>
     </div>
 </div>
 {% endblock content %}

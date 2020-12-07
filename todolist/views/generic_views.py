@@ -46,7 +46,7 @@ class DeleteTodo(InitializeTodoMixin, View):
 class DetailedTodo(GetSingleTodoMixin, UpdateView):
     form_class = TaskForm
     context_object_name = 'form'
-    template_name = 'todolist/detailed_todo.html'
+    template_name = 'todolist/detailed todo/detailed_todo.html'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

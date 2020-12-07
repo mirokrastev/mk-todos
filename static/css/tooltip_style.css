@@ -24,31 +24,16 @@
     left: 30px;
     top: -20px;
     width: 250px;
-    z-index: 2;
 }
 .tool-tip .tool-tip__info:before, .tool-tip .tool-tip__info:after {
     content: "";
     position: absolute;
     left: -10px;
-    top: 7px;
+    top: 20px;
     border-style: solid;
     border-width: 10px 10px 10px 0;
     border-color: transparent #27b1f0;
 }
-.tool-tip .tool-tip__info:after {
-    left: -8px;
-    border-right-color: #262626;
-}
-.tool-tip .tool-tip__info .info {
-    display: block;
-}
-.tool-tip .tool-tip__info .info__title {
-    color: #fa00f3;
-}
 .tool-tip:hover .tool-tip__info, .tool-tip:focus .tool-tip__info {
-    display: inline-block;
-}
-
-a:focus + .tool-tip .tool-tip__info {
     display: inline-block;
 }
