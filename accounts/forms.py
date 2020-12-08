@@ -1,6 +1,7 @@
 from django import forms
 from .models import CustomUser, UserProfile
 from django.contrib.auth import forms as auth_forms
+from .validators import length_username_validator
 
 
 class CustomUserCreationForm(auth_forms.UserCreationForm):
@@ -11,6 +12,8 @@ class CustomUserCreationForm(auth_forms.UserCreationForm):
             {'placeholder': 'username',
              'class': 'main_input'}
         )
+        self.fields['username'].widget.attrs['maxlength'] = 25
+        self.fields['username'].validators.append(length_username_validator)
 
         self.fields['password1'].widget.attrs.update(
             {'placeholder': 'password',
@@ -99,8 +102,9 @@ class LoginForm(forms.Form):
         widget=forms.TextInput(
             attrs={'name': 'username',
                    'class': 'fadeIn first main_input',
-                   'placeholder': 'login'}
-        ), label=''
+                   'placeholder': 'login',
+                   'maxlength': 25}
+        ), validators=[length_username_validator], label=''
     )
 
     password = forms.CharField(

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
-import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +26,7 @@ DEBUG = os.environ['DEBUG'] == 'True'
 
 ALLOWED_HOSTS = (lambda hosts: hosts
                  if isinstance(hosts, list)
-                 else hosts.split(', '))(os.environ.get('ALLOWED_HOSTS', ['*']))
+                 else hosts.split(', '))(os.environ.get('ALLOWED_HOSTS', []))
 
 
 # Application definition
@@ -43,13 +42,8 @@ INSTALLED_APPS = [
     'todolist',
 ]
 
-# If you are on development, you can run the development server without Django serving the static files.
-# To do this, you need to run the server with --nostatic flag. Example: python manage.py runserver --nostatic.
-# Then the web server will start to serve static files with WhiteNoise.
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -149,8 +143,8 @@ EMAIL_HOST_USER = os.environ['EMAIL_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+
 if DEBUG is False:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    django_heroku.settings(locals())

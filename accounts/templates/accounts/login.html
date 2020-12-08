@@ -1,23 +1,7 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'abstract/modelform_generic.html' %}
 
-{% block links %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/modelform_style.css' %}">
-{% endblock links %}
+{% block title %}<title>Log in</title>{% endblock title %}
 
-{% block title %}<title>Login</title>{% endblock title %}
-
-{% block content %}
-<div class="wrapper fadeInDown">
-    {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-    <div id="formContent">
-        <form method="POST">
-            {% csrf_token %}
-            {{ form }}
-            <br><br>
-            <input type="submit" class="fadeIn third input_button" value="Log In">
-        </form>
-        <small>Forgot your password? Reset <a href="{% url 'accounts:password_reset' %}">here</a></small>
-    </div>
-</div>
-{% endblock content %}
+{% block additional %}
+<small>Forgot your password? Reset <a href="{% url 'accounts:password_reset' %}">here</a></small>
+{% endblock additional %}

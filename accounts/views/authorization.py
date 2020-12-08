@@ -2,7 +2,7 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.views.generic import CreateView, FormView, DeleteView
+from django.views.generic import CreateView, FormView
 from accounts.forms import LoginForm, CustomUserCreationForm
 from accounts.models import CustomUser
 
@@ -12,15 +12,15 @@ class RegisterView(CreateView):
     template_name = 'accounts/register.html'
     context_object_name = 'form'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['button_value'] = 'Sign Up'
-        return context
-
     def form_valid(self, form):
         form = form.save()
         login(self.request, form)
         return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_value'] = 'Sign Up'
+        return context
 
 
 class LoginView(FormView):
@@ -34,12 +34,18 @@ class LoginView(FormView):
         user = authenticate(self.request, **credentials)
 
         if not user:
-            context = self.get_context_data()
-            context['error'] = 'Incorrect username or password!'
+            context = super().get_context_data()
+            form.add_error('password', 'Incorrect username or password!')
+            context['form'] = form
             return self.render_to_response(context)
 
         login(self.request, user)
         return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_value'] = 'Log in'
+        return context
 
 
 class LogOutView(View):
