@@ -24,7 +24,8 @@ This is a fully functioning Todo site. Some of the site features include:
   * The project has perfect querystring handling. It is done with one smart trick with templatetags. You can check the source code for it. It's really simple and         effective
   * I made it really simple for administrators to handle the site traffic.
   * The site has real working email system for recovering your password. You just need to create your profile with a real email address. I guarantee that your email       is not used for something else.
-
+  * There are other things that make up my site, but the ```README``` will become too bloated.
+  
 You can find the deployed project on this url: https://www.mk-todos.cf
 
 ```
