@@ -19,10 +19,11 @@ from django.contrib import admin
 from django.urls import path, include
 from mysite.settings import DEBUG
 from todolist.views.home_view import HomeView
+import os
 
 urlpatterns = [
     # Admin
-    path('django-admin/', admin.site.urls),
+    path(os.environ.get('ADMIN_PAGE', 'admin/'), admin.site.urls),
 
     # Auth
     path('accounts/', include('accounts.urls', namespace='accounts')),

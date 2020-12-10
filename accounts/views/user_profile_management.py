@@ -80,7 +80,7 @@ class UserProfileView(GetUsernameMixin, View):
 
 class PasswordChange(FormView):
     form_class = CustomPasswordChangeForm
-    template_name = 'accounts/register.html'
+    template_name = 'accounts/change/password_change.html'
 
     def form_valid(self, form):
         password = form.clean_new_password2()
@@ -110,10 +110,11 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         return context
 
 
-def change_theme(request, previous_url):
+def change_theme(request):
     if request.user.is_authenticated:
+        to_redirect = request.GET['next']
         user = UserProfile.objects.get(user=request.user)
         user.dark_mode = not user.dark_mode
         user.save()
-        return redirect(previous_url)
+        return redirect(to_redirect)
     raise Http404

@@ -1,7 +1,7 @@
 {% if dark_mode %}
-    <a class="dropdown-item" href="{% url 'accounts:change_theme' request.get_full_path %}">Light mode</a>
+    <a class="dropdown-item" href="{% url 'accounts:change_theme' %}?next={{ request.get_full_path }}">Light mode</a>
 {% else %}
-    <a class="dropdown-item" href="{% url 'accounts:change_theme' request.get_full_path %}">Dark mode</a>
+    <a class="dropdown-item" href="{% url 'accounts:change_theme' %}?next={{ request.get_full_path }}">Dark mode</a>
 {% endif %}
 <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
 <a class="dropdown-item" href="{% url 'accounts:delete_profile' %}" style="color: red;">Delete profile</a>

@@ -34,7 +34,7 @@ class LoginView(FormView):
         user = authenticate(self.request, **credentials)
 
         if not user:
-            context = super().get_context_data()
+            context = self.get_context_data()
             form.add_error('password', 'Incorrect username or password!')
             context['form'] = form
             return self.render_to_response(context)

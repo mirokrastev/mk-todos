@@ -13,7 +13,7 @@ urlpatterns = [
 
     path('delete/', login_required(DeleteProfileView.as_view()), name='delete_profile'),
 
-    path('theme/<path:previous_url>', change_theme, name='change_theme'),
+    path('theme/', change_theme, name='change_theme'),
 
     path('<str:username>', UserProfileView.as_view(), name='my_profile'),
 
