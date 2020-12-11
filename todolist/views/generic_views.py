@@ -10,7 +10,7 @@ from todolist.mixins import GetSingleTodoMixin, InitializeTodoMixin
 class CreateTodo(CreateView):
     form_class = TaskForm
     context_object_name = 'form'
-    template_name = 'todolist/create_todo.html'
+    template_name = 'todolist/create todo/create_todo.html'
 
     def form_valid(self, form):
         form = form.save(commit=False)

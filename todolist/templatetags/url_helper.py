@@ -1,3 +1,4 @@
+import os
 from django import template
 
 register = template.Library()
@@ -29,3 +30,8 @@ def relative_url(querystring_key, querystring_value, urlencode=''):
         querystring = mapper[to_append_new_querystring]
 
     return f'?{querystring}'
+
+
+@register.simple_tag
+def get_admin_url(scheme, base_url):
+    return f"{scheme}://{base_url}/{os.environ.get('ADMIN_PAGE', 'admin/')}"

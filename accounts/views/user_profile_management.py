@@ -110,11 +110,15 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         return context
 
 
-def change_theme(request):
-    if request.user.is_authenticated:
-        to_redirect = request.GET['next']
-        user = UserProfile.objects.get(user=request.user)
+class ChangeTheme(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.method == 'GET':
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        to_redirect = self.request.GET['next']
+        user = UserProfile.objects.get(user=self.request.user)
         user.dark_mode = not user.dark_mode
         user.save()
         return redirect(to_redirect)
-    raise Http404

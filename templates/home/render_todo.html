@@ -1,0 +1,17 @@
+{% if todo.important %}
+<div class="card bg-warning mb-3" style="font-weight: 600; width: 15rem; margin: 0 auto; color: #3911d9;">
+{% else %}
+<div class="card bg-secondary mb-3" style="width: 15rem; margin: 0 auto; color: #cfd9e8;">
+{% endif %}
+    <div class="card-header">{{ todo.title }}</div>
+        <div class="card-body text-center">
+            <p class="card-text">{{ todo.memo|truncatechars:25 }}</p>
+            <div style="display: inline-block;">
+                <small class="card-text">{{ todo.date_created|date:'j-n-Y H:i' }}</small>
+                <a href="{% url 'todo:detailed_todo' todo.id todo.title %}">
+                    <button class="btn btn-outline-dark" style="margin-left: 20px;">Edit</button>
+                </a>
+            </div>
+        </div>
+    </div>
+<hr>

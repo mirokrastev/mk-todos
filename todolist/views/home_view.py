@@ -16,7 +16,7 @@ class HomeView(GetRequestsMixin, FilterTodosMixin, PaginateObjectMixin, View):
 
     def get(self, request):
         context = self.get_context_data()
-        return render(request, 'home.html', context)
+        return render(request, 'home/home.html', context)
 
     def get_context_data(self):
         return {

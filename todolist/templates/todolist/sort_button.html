@@ -1,11 +1,13 @@
 {% load static %}
 {% load url_helper %}
+
 {% block links %}
 <link rel="stylesheet" type="text/css" href="{% static 'todolist/css/sort_style.css' %}">
 {% endblock links %}
-<div class="dropdown">
+
+<div class="dropdown_menu">
     <button class="dropbtn">Sort by</button>
-    <div class="dropdown-content">
+    <div class="dropdown_menu-content">
         <a href="{% relative_url 'order_by' 'newest' request.GET.urlencode %}">
             <button class="btn btn-primary">Newest</button>
         </a><br>

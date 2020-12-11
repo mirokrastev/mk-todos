@@ -1,9 +1,24 @@
-from django.test import TestCase
-from accounts.forms import CustomUserCreationForm, CustomPasswordResetForm
+from django.test import TestCase, Client
+from accounts.forms import CustomUserCreationForm, CustomPasswordResetForm, CustomSetPasswordForm
 from accounts.models import CustomUser, UserProfile
 
 
 class UserCreationFormTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        data = {
+            'username': 'testuser',
+            'password1': 'reallystrongpassword123',
+            'password2': 'reallystrongpassword123',
+            'email': 'testemail@gmail.com',
+        }
+        cls.user = CustomUserCreationForm(data).save()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+        # TODO: IMPLEMENT
+
     def test_valid_form_and_create_user(self):
         """
         This method is testing if UserCreationForm validates the data. It should not raise any exceptions.
@@ -47,7 +62,7 @@ class UserCreationFormTests(TestCase):
 
     def test_various_outcomes(self):
         """
-        This metod is testing various outcomes. Like an error for a short name, too long name and etc..
+        This method is testing various outcomes. Like an error for a short name, too long name and etc..
         """
         short_username = {
             'username': 'q',
@@ -62,13 +77,12 @@ class UserCreationFormTests(TestCase):
         long_username = short_username.copy()
         long_username['username'] = 'test' * 50
 
-        form = CustomPasswordResetForm(long_username)
+        form = CustomUserCreationForm(long_username)
         self.assertFalse(form.is_valid())
 
     def test_user_creation_if_it_has_userprofile(self):
         """
         This method is testing if creating an user with UserCreationForm.save() is creating a UserProfile model.
-        It is somewhat a redundant test, but you never know what can break :)
         """
         data = {
             'username': 'testuser',
@@ -105,4 +119,32 @@ class PasswordResetFormTests(TestCase):
 
 
 class SetPasswordFormTests(TestCase):
-    pass
+    @classmethod
+    def setUpClass(cls):
+        data = {
+            'username': 'testuser',
+            'password1': 'reallystrongpassword123',
+            'password2': 'reallystrongpassword123',
+            'email': 'testemail@gmail.com',
+        }
+        cls.user = CustomUserCreationForm(data).save()
+        cls.client = Client()
+
+    def test_valid_password_change(self):
+        """
+        This method is testing if SetPasswordForm is working as expected with correct data.
+        """
+        data = {
+            'new_password1': 'reallystrongpassword1234',
+            'new_password2': 'reallystrongpassword1234',
+        }
+        form = CustomSetPasswordForm(data)
+        self.assertTrue(form.is_valid())
+        credentials = {'username': self.user.username, 'password': data['new_password1']}
+        self.client.login(**credentials)
+        self.client.logout()
+        form.save()
+        self.client.login(username=credentials['username'], password='reallystrongpassword1234')
+
+    def test_invalid_password_change(self):
+        pass
