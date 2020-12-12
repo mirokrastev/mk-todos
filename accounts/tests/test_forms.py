@@ -4,20 +4,8 @@ from accounts.models import CustomUser, UserProfile
 
 
 class UserCreationFormTests(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        data = {
-            'username': 'testuser',
-            'password1': 'reallystrongpassword123',
-            'password2': 'reallystrongpassword123',
-            'email': 'testemail@gmail.com',
-        }
-        cls.user = CustomUserCreationForm(data).save()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.user.delete()
-        # TODO: IMPLEMENT
+    def tearDown(self):
+        CustomUser.objects.all().delete()
 
     def test_valid_form_and_create_user(self):
         """
@@ -85,7 +73,7 @@ class UserCreationFormTests(TestCase):
         This method is testing if creating an user with UserCreationForm.save() is creating a UserProfile model.
         """
         data = {
-            'username': 'testuser',
+            'username': 'testuser5',
             'password1': 'reallystrongpassword123',
             'password2': 'reallystrongpassword123',
             'email': 'testemail@gmail.com',
@@ -130,21 +118,33 @@ class SetPasswordFormTests(TestCase):
         cls.user = CustomUserCreationForm(data).save()
         cls.client = Client()
 
+    @classmethod
+    def tearDownClass(cls):
+        CustomUser.objects.all().delete()
+
     def test_valid_password_change(self):
         """
         This method is testing if SetPasswordForm is working as expected with correct data.
         """
         data = {
-            'new_password1': 'reallystrongpassword1234',
-            'new_password2': 'reallystrongpassword1234',
+            'new_password1': 'qwerasd123',
+            'new_password2': 'qwerasd123',
         }
-        form = CustomSetPasswordForm(data)
+        form = CustomSetPasswordForm(self.user, data)
         self.assertTrue(form.is_valid())
-        credentials = {'username': self.user.username, 'password': data['new_password1']}
+        credentials = {'username': self.user.username, 'password': 'reallystrongpassword123'}
         self.client.login(**credentials)
         self.client.logout()
         form.save()
-        self.client.login(username=credentials['username'], password='reallystrongpassword1234')
+        self.client.login(username=credentials['username'], password='qwerasd123')
 
     def test_invalid_password_change(self):
-        pass
+        """
+        This method is testing if SetPasswordForm is returning False for incorrect data.
+        """
+        data = {
+            'new_password1': 'qwerasd123',
+            'new_password2': 'qwerasd1234',
+        }
+        form = CustomSetPasswordForm(self.user, data)
+        self.assertFalse(form.is_valid())

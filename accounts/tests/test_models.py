@@ -3,7 +3,7 @@ from accounts.models import CustomUser, UserProfile
 
 
 class CustomUserBasicTests(TestCase):
-    def tearDown(self) -> None:
+    def tearDown(self):
         CustomUser.objects.all().delete()
 
     def test_basic_user_creation(self):
@@ -47,8 +47,6 @@ class UserProfileBasicTests(TestCase):
         """
         setUp method to create a userprofile instance.
         """
-        super().setUpClass()
-
         credentials = {
             'username': 'testuser',
             'password': 'password',
@@ -56,6 +54,10 @@ class UserProfileBasicTests(TestCase):
         CustomUser.objects.create_user(**credentials)
         user_obj = CustomUser.objects.get(username=credentials['username'])
         cls.userprofile = UserProfile.objects.get(user=user_obj)
+
+    @classmethod
+    def tearDownClass(cls):
+        CustomUser.objects.all().delete()
 
     def tearDown(self):
         """

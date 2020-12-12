@@ -1,12 +1,12 @@
 from django.urls import reverse_lazy
 from django.views import View
-from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetView
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.generic import FormView
 from accounts.mixins import GetUsernameMixin
 from accounts.models import CustomUser, UserProfile
-from accounts.forms import CustomPasswordChangeForm, CustomSetPasswordForm, UserProfileForm
+from accounts.forms import CustomPasswordChangeForm, CustomSetPasswordForm, UserProfileForm, CustomPasswordResetForm
 from accounts.common import upload_new_picture
 
 
@@ -96,6 +96,18 @@ class PasswordChange(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['button_value'] = 'Change'
+        return context
+
+
+class CustomPasswordResetView(PasswordResetView):
+    form_class = CustomPasswordResetForm
+    template_name = 'accounts/reset/password_reset_form.html'
+    success_url = reverse_lazy('accounts:password_reset_done')
+    email_template_name = 'accounts/reset/password_reset_email.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_value'] = 'Submit'
         return context
 
 

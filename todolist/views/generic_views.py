@@ -2,13 +2,13 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import CreateView, UpdateView
-from todolist.forms import TaskForm
+from todolist.forms import TodoForm
 from django.utils import timezone
 from todolist.mixins import GetSingleTodoMixin, InitializeTodoMixin
 
 
 class CreateTodo(CreateView):
-    form_class = TaskForm
+    form_class = TodoForm
     context_object_name = 'form'
     template_name = 'todolist/create todo/create_todo.html'
 
@@ -44,7 +44,7 @@ class DeleteTodo(InitializeTodoMixin, View):
 
 
 class DetailedTodo(GetSingleTodoMixin, UpdateView):
-    form_class = TaskForm
+    form_class = TodoForm
     context_object_name = 'form'
     template_name = 'todolist/detailed todo/detailed_todo.html'
 

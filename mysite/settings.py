@@ -26,7 +26,7 @@ DEBUG = os.environ['DEBUG'] == 'True'
 
 ALLOWED_HOSTS = (lambda hosts: hosts
                  if isinstance(hosts, list)
-                 else hosts.split(', '))(os.environ.get('ALLOWED_HOSTS', []))
+                 else hosts.split(','))(os.environ.get('ALLOWED_HOSTS', []))
 
 
 # Application definition

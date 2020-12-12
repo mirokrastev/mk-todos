@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from .forms import CustomPasswordResetForm
 from .views import *
 from django.contrib.auth import views as auth_views
 
@@ -19,12 +18,7 @@ urlpatterns = [
 
     path('password/change/', login_required(PasswordChange.as_view()), name='password_change'),
 
-    path('password/reset/', auth_views.PasswordResetView.as_view(
-        template_name='accounts/reset/password_reset_form.html',
-        email_template_name='accounts/reset/password_reset_email.html',
-        form_class=CustomPasswordResetForm,
-        success_url=reverse_lazy('accounts:password_reset_done')),
-         name='password_reset'),
+    path('password/reset/', CustomPasswordResetView.as_view(), name='password_reset'),
 
     path('password/reset/confirmation', auth_views.PasswordResetDoneView.as_view(
         template_name='accounts/reset/password_reset_done.html'),

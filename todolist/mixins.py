@@ -18,7 +18,7 @@ class PaginateObjectMixin:
     def paginate(self, obj, page):
         if not obj:
             return None
-        paginator = Paginator(obj, per_page=3)
+        paginator = Paginator(obj, per_page=4)
         paginated_obj = paginator.page(page)
         if len(paginated_obj.object_list) > 1:
             paginated_obj.object_list[0].is_first = True
