@@ -27,6 +27,7 @@ This is a fully functioning Todo site. Some of the site features include:
   * There are other things that make up my site, but the ```README``` will become too bloated.
   
 You can find the deployed project on this url: https://www.mk-todos.cf
+EDIT: I stopped the web server because of security issues. Expect in the future a new deployment!
 
 ```
 SOME NOTES:
