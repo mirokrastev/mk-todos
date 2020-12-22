@@ -6,7 +6,7 @@ from todolist.views.home_view import CompletedTodosHomeView
 app_name = 'todo'
 
 urlpatterns = [
-    path('create', login_required(views.CreateTodo.as_view()), name='create'),
+    path('create', login_required(views.CreateTodo.as_view()), name='create_todo'),
     path('completed', login_required(CompletedTodosHomeView.as_view()), name='completed_todos'),
 
     path('<int:task_pk>/<str:name>', login_required(views.DetailedTodo.as_view()), name='detailed_todo'),

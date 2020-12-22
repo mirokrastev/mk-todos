@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Registration failure | MK-TODOS</title>{% endblock title %}
+
+{% block content %}
+    <div class="container text-center">
+        <br>
+        <h2 style="color: red;">Registration failure!</h2><hr>
+        <h4>
+            For one reason or another, your account wasn't successfully created.
+        </h4><hr><br>
+        <div class="text-left">
+            <p>
+                The reason is SMTP failure. I can't control how SMTP connects with you
+                and how it sends the mail for account verification.
+            </p><br>
+            <p>
+                Some guidance:<br>
+                  - Try different email<br>
+                  - Disable your VPN or proxy, if you have<br>
+                  - Clear your browser cache and cookies.
+                  - If nothing helps, you can register without an email. This way, you skip the email verification.
+                  <br>
+                  If you register without an email, you will not be able to reset your password.
+            </p><br>
+            <p>If nothing helps, please contact us at {{ admin_email }}.</p>
+        </div>
+    </div>
+{% endblock content %}

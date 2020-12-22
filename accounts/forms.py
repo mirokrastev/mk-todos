@@ -25,16 +25,18 @@ class CustomUserCreationForm(auth_forms.UserCreationForm):
              'class': 'main_input'}
         )
 
-        self.fields['email'].widget.attrs.update({
-            'placeholder': 'email',
-            'class': 'main_input'}
+        self.fields['email'].widget.attrs.update(
+            {'placeholder': 'email',
+             'class': 'main_input',
+             'required': ""}
         )
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'password1', 'password2', 'email')
         help_texts = {
             'email': 'Enter your email address.'
+                     'It is optional. You need to verify your account.'
         }
 
 

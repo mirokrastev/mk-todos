@@ -1,7 +1,7 @@
-{% extends 'abstract/modelform_generic.html' %}
+{% extends 'abstract/form style/form_generic.html' %}
 
 {% block title %}<title>Log in | MK-TODOS</title>{% endblock title %}
 
-{% block additional %}
+{% block div_additional %}
 <small>Forgot your password? Reset <a href="{% url 'accounts:password_reset' %}">here</a></small>
-{% endblock additional %}
+{% endblock div_additional %}

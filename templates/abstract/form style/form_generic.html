@@ -6,8 +6,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/tooltip_style.css' %}">
 {% endblock links %}
 
-{% block title %}{% endblock title %}
-
 {% block content %}
     <div class="wrapper fadeInDown">
         {% for field in form %}
@@ -16,6 +14,7 @@
         <div id="formContent">
             <form method="POST" autocomplete="off">
                 {% for field in form %}
+                    <span>
                     {{ field }}
                     {% if field.help_text %}
                         <span class="tool-tip">
@@ -23,12 +22,14 @@
                         <i class="tool-tip__info">{{ field.help_text }}</i>
                         </span>
                     {% endif %}
+                    </span>
                 {% endfor %}
                 <br><br>
+                {% block form_additional %}{% endblock form_additional %}
                 <input type="submit" class="fadeIn first input_button" value="{{ button_value }}">
                 {% csrf_token %}
             </form>
-            {% block additional %}{% endblock additional %}
+            {% block div_additional %}{% endblock div_additional %}
         </div>
     </div>
 {% endblock content %}

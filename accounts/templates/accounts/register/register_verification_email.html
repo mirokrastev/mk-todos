@@ -1,0 +1,14 @@
+{% load i18n %}{% autoescape off %}
+{% blocktranslate %}You're receiving this email to verify your account at {{ site_name }}.{% endblocktranslate %}
+
+{% translate "Thank you for registering! To activate your account, just click on the link." %}
+{% block reset_link %}
+{{ protocol }}://{{ domain }}{% url 'accounts:activate_account' uidb64=uid token=token %}
+{% endblock %}
+{% translate 'Your username, in case you’ve forgotten:' %} {{ username}}
+
+{% translate "Thanks for using our site!" %}
+
+{% blocktranslate %}{{ site_name }} support.{% endblocktranslate %}
+
+{% endautoescape %}

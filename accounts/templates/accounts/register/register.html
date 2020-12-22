@@ -1,0 +1,19 @@
+{% extends 'abstract/form style/form_generic.html' %}
+{% load static %}
+
+{% block title %}<title>Sign Up | MK-TODOS</title>{% endblock title %}
+
+{% block form_additional %}
+<div class="custom-control custom-switch">
+    <input onclick="checkSwitchButton(this)" type="checkbox" class="custom-control-input" id="customSwitch1">
+    <label class="custom-control-label" for="customSwitch1">Disable email</label>
+</div>
+{% endblock form_additional %}
+
+{% block div_additional %}
+<small>Have an account? Log in from <a href="{% url 'accounts:login_v' %}">here</a></small>
+{% endblock div_additional %}
+
+{% block scripts %}
+<script src="{% static 'accounts/js/email_switch.js' %}"></script>
+{% endblock scripts %}

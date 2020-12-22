@@ -7,6 +7,8 @@ app_name = 'accounts'
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register_v'),
+    path('activate/<uidb64>/<token>', ActivateAccountView.as_view(), name='activate_account'),
+
     path('login/', LoginView.as_view(), name='login_v'),
     path('logout/', login_required(LogOutView.as_view()), name='logout_v'),
 
