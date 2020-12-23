@@ -20,16 +20,16 @@ urlpatterns = [
 
     path('password/change/', login_required(PasswordChange.as_view()), name='password_change'),
 
-    path('password/reset/', CustomPasswordResetView.as_view(), name='password_reset'),
 
-    path('password/reset/confirmation', auth_views.PasswordResetDoneView.as_view(
-        template_name='accounts/reset/password_reset_done.html'),
+    path('password/reset/', CustomPasswordResetView.as_view(),
+         name='password_reset'),
+
+    path('password/reset/confirmation', CustomPasswordResetDoneView.as_view(),
          name='password_reset_done'),
 
     path('password/reset/<uidb64>/<token>', CustomPasswordResetConfirmView.as_view(),
          name='password_reset_confirm'),
 
-    path('password/reset/completed', auth_views.PasswordResetCompleteView.as_view(
-        template_name='accounts/reset/password_reset_complete.html'),
+    path('password/reset/completed', CustomPasswordResetCompleteView.as_view(),
          name='password_reset_complete'),
 ]

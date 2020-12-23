@@ -23,18 +23,6 @@ class UserCreationFormTests(TestCase):
         user = form.save()
         self.assertTrue(isinstance(user, CustomUser))
 
-    def test_invalid_form_email_error(self):
-        """
-        This method is testing if UserCreationForm returns an error for email field. It is required by design.
-        """
-        data = {
-            'username': 'testuser',
-            'password1': 'reallystrongpassword123',
-            'password2': 'reallystrongpassword123',
-        }
-        form = CustomUserCreationForm(data)
-        self.assertFalse(form.is_valid())
-
     def test_password_mismatch(self):
         """
         This method is testing if UserCreationForm is returning an error for password mismatch

@@ -7,6 +7,7 @@ from accounts.forms import LoginForm, CustomUserCreationForm
 from django.http import Http404, HttpResponseBadRequest
 from django.utils.encoding import force_str, force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.exceptions import ValidationError
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from accounts.tokens import email_verification_token
@@ -72,7 +73,7 @@ class ActivateAccountView(View):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = CustomUser.objects.get(pk=uid)
-        except CustomUser.DoesNotExist:
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist, ValidationError):
             raise Http404
 
         if not email_verification_token.check_token(user, token):
