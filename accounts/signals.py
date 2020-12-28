@@ -2,6 +2,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save, pre_delete
 from accounts.models import CustomUser, UserProfile
 from accounts.common import delete_image
+from django.core.cache import cache
 
 
 @receiver(pre_save, sender=CustomUser)
@@ -22,3 +23,9 @@ def delete_user_avatar(sender, instance, **kwargs):
 
     if picture != 'default-user-avatar.jpg':
         delete_image(profile.avatar.path)
+
+
+@receiver(post_save, sender=UserProfile)
+def clear_cache(sender, instance, **kwargs):
+    if instance in cache:
+        cache.delete(instance)
