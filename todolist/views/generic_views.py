@@ -1,13 +1,14 @@
-from django.http import Http404
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import CreateView, UpdateView
+from django.http import Http404
 from todolist.forms import TodoForm
 from django.utils import timezone
 from todolist.mixins import GetSingleTodoMixin, InitializeTodoMixin
+from utils.mixins import GenericDispatchMixin
 
 
-class CreateTodo(CreateView):
+class CreateTodo(GenericDispatchMixin, CreateView):
     form_class = TodoForm
     context_object_name = 'form'
     template_name = 'todolist/create todo/create_todo.html'

@@ -1,17 +1,24 @@
-from django.urls import reverse_lazy
-from django.views import View
-from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetView, PasswordResetDoneView, \
-    PasswordResetCompleteView
-from django.http import Http404
 from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib.auth.views import (
+    PasswordResetView, PasswordResetDoneView,
+    PasswordResetConfirmView, PasswordResetCompleteView
+)
 from django.views.generic import FormView
-from accounts.mixins import GetUsernameMixin
 from accounts.models import CustomUser, UserProfile
-from accounts.forms import CustomPasswordChangeForm, CustomSetPasswordForm, UserProfileForm, CustomPasswordResetForm
+from accounts.forms import (
+    CustomPasswordChangeForm, CustomSetPasswordForm,
+    UserProfileForm, CustomPasswordResetForm
+)
+from django.http import Http404
+from utils.http import Http400
+from accounts.mixins import GetUsernameMixin
+from utils.mixins import GenericDispatchMixin, EnableSearchBarMixin
+from django.urls import reverse_lazy
 from accounts.common import upload_new_picture
 
 
-class UserProfileView(GetUsernameMixin, View):
+class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -21,8 +28,10 @@ class UserProfileView(GetUsernameMixin, View):
         self.concrete: bool = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.username = self.get_username(kwargs)
+        if self.request.method not in ('GET', 'POST'):
+            raise Http400
 
+        self.username = self.get_username(kwargs)
         try:
             self.user = CustomUser.objects.get(username=self.username)
             self.profile = UserProfile.objects.get(user=self.user)
@@ -33,7 +42,7 @@ class UserProfileView(GetUsernameMixin, View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(inst=self.profile)
+        context = self.get_context_data()
         context['instance'] = self.alter_form(context['instance'])
 
         return render(self.request, 'accounts/user_profile.html', context)
@@ -55,14 +64,6 @@ class UserProfileView(GetUsernameMixin, View):
 
         return self.get(self.request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        inst = kwargs.get('inst', None)
-
-        return {'username': self.username,
-                'profile': self.profile,
-                'instance': UserProfileForm(instance=inst),
-                'concrete': self.concrete}
-
     def alter_form(self, instance):
         dd = {
             True: f'How do you feel today, {self.username} :)',
@@ -78,8 +79,17 @@ class UserProfileView(GetUsernameMixin, View):
 
         return instance
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-class PasswordChange(FormView):
+        context.update({'username': self.username,
+                        'profile': self.profile,
+                        'instance': UserProfileForm(instance=self.profile),
+                        'concrete': self.concrete})
+        return context
+
+
+class PasswordChange(GenericDispatchMixin, FormView):
     form_class = CustomPasswordChangeForm
     template_name = 'accounts/change/password_change.html'
 
@@ -152,7 +162,7 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
 class ChangeTheme(View):
     def dispatch(self, request, *args, **kwargs):
         if not self.request.method == 'GET':
-            raise Http404
+            raise Http400
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):

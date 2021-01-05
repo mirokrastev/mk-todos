@@ -1,10 +1,12 @@
 from django.shortcuts import redirect, render
 from django.views import View
+from django.views.generic import CreateView, FormView
 from django.contrib.auth import authenticate, login, logout
 from accounts.models import CustomUser
-from django.views.generic import CreateView, FormView
 from accounts.forms import LoginForm, CustomUserCreationForm
-from django.http import Http404, HttpResponseBadRequest
+from django.http import Http404
+from utils.http import Http400
+from utils.mixins import GenericDispatchMixin
 from django.utils.encoding import force_str, force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.exceptions import ValidationError
@@ -16,7 +18,7 @@ from mysite.settings import EMAIL_HOST_USER
 from smtplib import SMTPException
 
 
-class RegisterView(CreateView):
+class RegisterView(GenericDispatchMixin, CreateView):
     form_class = CustomUserCreationForm
     template_name = 'accounts/register/register.html'
     context_object_name = 'form'
@@ -66,7 +68,7 @@ class RegisterView(CreateView):
 class ActivateAccountView(View):
     def dispatch(self, request, *args, **kwargs):
         if not self.request.method == 'GET':
-            raise HttpResponseBadRequest
+            raise Http400
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, uidb64, token):
@@ -84,7 +86,7 @@ class ActivateAccountView(View):
         return render(self.request, 'accounts/register/register_complete.html')
 
 
-class LoginView(FormView):
+class LoginView(GenericDispatchMixin, FormView):
     form_class = LoginForm
     template_name = 'accounts/login.html'
 
@@ -112,7 +114,7 @@ class LoginView(FormView):
 class LogOutView(View):
     def dispatch(self, request, *args, **kwargs):
         if not self.request.method == 'POST':
-            raise Http404
+            raise Http400
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request):
@@ -120,12 +122,7 @@ class LogOutView(View):
         return redirect('home')
 
 
-class DeleteProfileView(View):
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.method not in ('GET', 'POST'):
-            raise Http404
-        return super().dispatch(request, *args, **kwargs)
-
+class DeleteProfileView(GenericDispatchMixin, View):
     def get(self, request):
         return render(self.request, 'accounts/delete/profile_delete.html')
 

@@ -1,11 +1,10 @@
 const textEl = document.getElementById('main-bio');
 const avatarEl = document.getElementById("avatar");
 
-textEl.setAttribute("oninput", "resizeArea();");
+textEl.addEventListener('input', resizeArea)
 textEl.addEventListener("keypress", submitOnEnter);
 
-avatarEl.setAttribute('onchange', 'form.submit();');
-
+avatarEl.addEventListener('change', function() {this.form.submit();})
 resizeArea();
 
 function submitOnEnter(event) {
@@ -16,6 +15,6 @@ function submitOnEnter(event) {
 }
 
 function resizeArea() {
-    textEl.style.height = 'auto';
-    textEl.style.height = textEl.scrollHeight + 'px';
+    this.style.height = 'auto';
+    this.style.height = textEl.scrollHeight + 'px';
 }
