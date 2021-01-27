@@ -12,8 +12,8 @@ class HomeView(EnableSearchBarMixin, GetRequestsMixin, FilterTodosMixin, Paginat
         self.message = None
 
     def dispatch(self, request, *args, **kwargs):
-        # if not self.request.method == 'GET':
-        #     raise Http400
+        if not self.request.method == 'GET':
+            raise Http400
         self.todos = self.get_todos()
         self.message = self.request.session.pop('message', None)
         return super().dispatch(request, *args, **kwargs)

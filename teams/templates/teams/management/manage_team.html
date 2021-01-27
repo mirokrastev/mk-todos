@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Manage Team | MK-TODOS</title>{% endblock title %}
+
+{% block content %}<br>
+    <div class="container">
+        {% for error in errors %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+        <div class="row">
+            <div class="col-md">
+                <span>All Users:</span><br><br>
+                {% for user in users %}
+                    {% include 'teams/management/render/render_user.html' %}
+                {% endfor %}
+            </div>
+            <div class="col-md">
+                <span>Change Team identifier:</span><br><br>
+                {{ identifier_form.as_p }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

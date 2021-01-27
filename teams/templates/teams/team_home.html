@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}<title>Team Management | MK-TODOS</title>{% endblock title %}
+
+{% block content %}<br>
+    <div class="container">
+    {% for error in errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endfor %}
+        <div class="row">
+            <div class="col-md border-right justify-content-center text-center">
+                <span>All Teams:</span><br><br>
+                {% if all_teams %}
+                {% for team in all_teams %}
+                    {% include 'teams/render team/render_team.html' %}
+                {% endfor %}
+                {% else %}
+                You dont have a Team!
+                {% endif %}
+            </div>
+            <div class="col-md border-right border-right justify-content-center text-center">
+                <span>Owned Teams:</span><br><br>
+                {% if ownership_teams %}
+                    {% for team in ownership_teams %}
+                        {% include 'teams/render team/render_team.html' %}
+                    {% endfor %}
+                {% else %}
+                    You dont have a Team!
+                {% endif %}
+            </div>
+            <div class="col-md justify-content-center text-center">
+                <span>Join Team:</span><br><br>
+                <form method="post" action="{% url 'teams:join_team' %}">
+                    {% csrf_token %}
+                    {{ join_form.as_p }}
+                </form>
+                <br><hr><br>
+                <div class="col-md justify-content-center text-center">
+                    <span>Create Team:</span><br><br>
+                    <form method="post" action="{% url 'teams:create_team' %}">
+                        {% csrf_token %}
+                        {{ create_form.as_p }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'teams/js/teams_functionality.js' %}"></script>
+{% endblock scripts %}

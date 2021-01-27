@@ -1,10 +1,10 @@
 from django.contrib import admin
-from todolist.models import Task
+from todolist.models import UserTodo
 from .models import CustomUser, UserProfile
 
 
 class TaskTabularInline(admin.TabularInline):
-    model = Task
+    model = UserTodo
     extra = 0
 
 

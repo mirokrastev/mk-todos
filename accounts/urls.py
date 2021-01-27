@@ -19,7 +19,6 @@ urlpatterns = [
 
     path('password/change/', login_required(PasswordChange.as_view()), name='password_change'),
 
-
     path('password/reset/', CustomPasswordResetView.as_view(),
          name='password_reset'),
 

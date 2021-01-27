@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.http import Http404
-from todolist.models import Task
+from teams.models import TeamJunction
+from todolist.models import UserTodo, TeamTodo
 
 
 class GetRequestsMixin:
@@ -34,15 +35,20 @@ class FilterTodosMixin:
         if word:
             params.update({'title__icontains': word})
 
-        todos = Task.objects.filter(user=self.request.user, **params).order_by(order)
-        return todos
+        user_todos = UserTodo.objects.filter(user=self.request.user, **params).order_by(order)
+        return user_todos
+        # TODO: IMPLEMENT TEAM TODOS, IMPLEMENT WITH CACHE SYSTEM FOR FASTER READ!
+        # user_teams = TeamJunction.objects.filter(user=self.request.user)
+        # user_team_todos = [todo
+        #                  for query in user_teams
+        #                  for todo in TeamTodo.objects.filter(team=query.team)]
 
 
 class GetSingleTodoMixin:
     def get_object(self):
         try:
-            return Task.objects.get(pk=self.kwargs['task_pk'], user=self.request.user)
-        except (Task.DoesNotExist, ValueError):
+            return UserTodo.objects.get(pk=self.kwargs['task_pk'], user=self.request.user)
+        except (UserTodo.DoesNotExist, ValueError):
             return None
 
 

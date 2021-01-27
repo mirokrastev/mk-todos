@@ -23,19 +23,18 @@ class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
         super().__init__(*args, **kwargs)
 
         self.user: CustomUser = None
-        self.username: str = None
         self.profile: UserProfile = None
-        self.concrete: bool = None
+        self.is_trusted: bool = None
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.method not in ('GET', 'POST'):
             raise Http400
 
-        self.username = self.get_username(kwargs)
+        username = self.get_username(kwargs)
         try:
-            self.user = CustomUser.objects.get(username=self.username)
+            self.user = CustomUser.objects.get(username=username)
             self.profile = UserProfile.objects.get(user=self.user)
-            self.concrete = self.request.user.username == self.username
+            self.is_trusted = self.request.user == self.user
         except (CustomUser.DoesNotExist, UserProfile.DoesNotExist):
             raise Http404
 
@@ -48,11 +47,11 @@ class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
         return render(self.request, 'accounts/user_profile.html', context)
 
     def post(self, request, *args, **kwargs):
-        if not self.concrete:
+        if not self.is_trusted:
             raise Http404
 
-        new_picture = request.FILES.get('avatar', None)
-        bio = request.POST.get('bio', None)
+        new_picture = self.request.FILES.get('avatar', None)
+        bio = self.request.POST.get('bio', None)
 
         if new_picture:
             upload_new_picture(self.profile, new_picture)
@@ -70,22 +69,22 @@ class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
             False: f'{self.username} has no bio.',
         }
 
-        if not self.concrete:
+        if not self.is_trusted:
             for field in instance.fields.values():
                 field.widget.attrs.update({'readonly': ""})
 
         if not self.profile.bio:
-            instance.fields['bio'].widget.attrs.update({'placeholder': dd[self.concrete]})
+            instance.fields['bio'].widget.attrs.update({'placeholder': dd[self.is_trusted]})
 
         return instance
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context.update({'username': self.username,
+        context.update({'username': self.user.username,
                         'profile': self.profile,
                         'instance': UserProfileForm(instance=self.profile),
-                        'concrete': self.concrete})
+                        'concrete': self.is_trusted})
         return context
 
 
