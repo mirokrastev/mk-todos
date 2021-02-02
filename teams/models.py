@@ -4,7 +4,7 @@ from teams.managers import TeamManager
 
 
 class Team(models.Model):
-    title = models.CharField(db_index=True, max_length=50, unique=True, verbose_name='Team')
+    title = models.CharField(db_index=True, max_length=25, unique=True, verbose_name='Team')
     identifier = models.CharField(db_index=True, unique=True, max_length=20)
     owner = models.ForeignKey(db_index=True, to=CustomUser, on_delete=models.CASCADE)
 

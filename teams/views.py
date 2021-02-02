@@ -1,15 +1,19 @@
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic.base import ContextMixin
+from teams.base import FullInitializer
 from teams.common import generate_identifier
 from teams.forms import TeamForm, TeamIdentifierForm
 from teams.models import Team, TeamJunction
 from utils.mixins import GenericDispatchMixin
-from teams.mixins import InitializeTeamMixin, InitializeUserMixin
 from utils.http import Http400
+from utils.base import BaseRedirectFormView
+from teams.mixins import InitializeTeamMixin
 
 
-class TeamHomeView(GenericDispatchMixin, ContextMixin, View):
+class TeamHomeView(ContextMixin, GenericDispatchMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.all_teams = None
@@ -38,61 +42,54 @@ class TeamHomeView(GenericDispatchMixin, ContextMixin, View):
         return context
 
 
-class ManageTeam(InitializeTeamMixin, GenericDispatchMixin, ContextMixin, View):
+class ManageTeam(FullInitializer, ContextMixin, View):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.errors = None
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.method == 'GET':
+            raise Http400
+        self.errors = self.request.session.pop('errors', None)
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
         return render(self.request, 'teams/management/manage_team.html', context)
 
-    def post(self, request, *args, **kwargs):
-        if not self.is_trusted:
-            raise Http400
-
-        # TODO: IMPLEMENT MULTIPLE FORMS ON ONE URL/VIEW!
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'owner': self.team.owner,
+        context.update({'team': self.team,
+                        'owner': self.team.owner,
                         'users': [entry.user for entry in TeamJunction.objects.filter(team=self.team)],
-                        'identifier_form': TeamIdentifierForm(initial={'identifier': self.team.identifier})})
+                        'errors': self.errors,
+                        'is_trusted': self.is_trusted})
+
+        if self.is_trusted:
+            context.update({'identifier_form': TeamIdentifierForm(initial={'identifier': self.team.identifier}),
+                            'name_form': TeamForm(instance=self.team)})
+
         return context
 
 
-class CreateTeam(GenericDispatchMixin, View):
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.method == 'POST':
-            raise Http400
-        self.request.session['errors'] = []
-        return super().dispatch(request, *args, **kwargs)
+class CreateTeam(BaseRedirectFormView):
+    form_class = TeamForm
+    success_url = 'teams:team_home'
 
-    def post(self, request, *args, **kwargs):
-        form = TeamForm(self.request.POST)
-        if not form.is_valid():
-            return self.form_invalid(*form.errors.values())
-
+    def form_valid(self, form):
         form = form.save(commit=False)
         form.owner = self.request.user
         form.identifier = generate_identifier(form.title)
         form.save()
         TeamJunction.objects.create(team=form, user=self.request.user)
-        return redirect('teams:team_home')
-
-    def form_invalid(self, list_of_errors=None):
-        self.request.session['errors'].extend(list_of_errors or [])
-        return redirect('teams:team_home')
+        return self.redirect()
 
 
-class JoinTeam(View):
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.method == 'POST':
-            raise Http400
-        self.request.session['errors'] = []
-        return super().dispatch(request, *args, **kwargs)
+class JoinTeam(BaseRedirectFormView):
+    form_class = TeamIdentifierForm
+    success_url = 'teams:team_home'
 
-    def post(self, request, *args, **kwargs):
-        form = TeamIdentifierForm(self.request.POST)
-        if not form.is_valid():
-            return self.form_invalid(*form.errors.values())
-
+    def form_valid(self, form):
         identifier = form.cleaned_data['identifier']
 
         team = Team.objects.get_or_none(identifier=identifier)
@@ -107,32 +104,13 @@ class JoinTeam(View):
             return self.form_invalid(errors)
 
         TeamJunction.objects.create(team=team, user=self.request.user)
-        return redirect('teams:team_home')
-
-    def form_invalid(self, list_of_errors=None):
-        self.request.session['errors'].extend(list_of_errors or [])
-        return redirect('teams:team_home')
+        return self.redirect()
 
 
-class LeaveTeam(InitializeTeamMixin, InitializeUserMixin, View):
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.method == 'POST':
-            raise Http400
-        return super().dispatch(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        if self.request.user == self.user:
-            return redirect('teams:delete_team', kwargs={'team': self.kwargs['team']})
-        self.user.delete()
-        return redirect('teams:team_home')
-
-
-class KickUser(InitializeTeamMixin, InitializeUserMixin, ContextMixin, GenericDispatchMixin, View):
-    admin_only = True
-
+class LeaveTeam(FullInitializer, ContextMixin, GenericDispatchMixin, View):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
-        return render(self.request, 'teams/delete/team_delete.html', context)
+        return render(self.request, 'teams/management/leave_team.html', context)
 
     def post(self, request, *args, **kwargs):
         self.user.delete()
@@ -140,7 +118,26 @@ class KickUser(InitializeTeamMixin, InitializeUserMixin, ContextMixin, GenericDi
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user'] = self.user
+        context.update({'team': self.kwargs['team'],
+                        'button_value': 'Leave'})
+        return context
+
+
+class KickUser(FullInitializer, ContextMixin, GenericDispatchMixin, View):
+    admin_only = True
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        return render(self.request, 'teams/kick_user.html', context)
+
+    def post(self, request, *args, **kwargs):
+        self.user.delete()
+        return redirect(reverse('teams:manage_team', kwargs={'team': self.team}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'user': self.user,
+                        'button_value': 'Kick'})
         return context
 
 
@@ -153,3 +150,53 @@ class DeleteTeam(InitializeTeamMixin, GenericDispatchMixin, View):
     def post(self, request, *args, **kwargs):
         self.team.delete()
         return redirect('teams:team_home')
+
+
+class ChangeTeamIdentifier(InitializeTeamMixin, BaseRedirectFormView):
+    admin_only = True
+    form_class = TeamIdentifierForm
+    success_url = 'teams:manage_team'
+
+    def form_valid(self, form):
+        identifier = form.cleaned_data['identifier']
+
+        if self.team.identifier == identifier:
+            return self.form_invalid(['You entered the same Team Identifier.'])
+
+        try:
+            self.team.identifier = identifier
+            self.team.save()
+        except IntegrityError:
+            return self.form_invalid(['An error occurred. Please try another identifier!'])
+
+        self.team.identifier = identifier
+        self.team.save()
+        return self.redirect()
+
+    def redirect(self, redirect_kwargs=None):
+        return super().redirect({'team': self.team})
+
+
+class ChangeTeamName(InitializeTeamMixin, BaseRedirectFormView):
+    admin_only = True
+    form_class = TeamForm
+    success_url = 'teams:manage_team'
+
+    def form_valid(self, form):
+        name = form.cleaned_data['title']
+
+        if self.team.title == name:
+            return self.form_invalid(['You entered the same Team name.'])
+
+        try:
+            self.team.title = name
+            self.team.save()
+        except IntegrityError:
+            return self.form_invalid(['An error occurred. Please try another name!'])
+
+        self.team.title = name
+        self.team.save()
+        return self.redirect()
+
+    def redirect(self, redirect_kwargs=None):
+        return super().redirect({'team': self.team})

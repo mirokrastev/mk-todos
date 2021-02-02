@@ -12,21 +12,17 @@
             <div class="col-md border-right justify-content-center text-center">
                 <span>All Teams:</span><br><br>
                 {% if all_teams %}
-                {% for team in all_teams %}
-                    {% include 'teams/render team/render_team.html' %}
-                {% endfor %}
+                {% include 'teams/render team/main.html' with teams=all_teams %}
                 {% else %}
-                You dont have a Team!
+                You are not a member of any team!
                 {% endif %}
             </div>
             <div class="col-md border-right border-right justify-content-center text-center">
                 <span>Owned Teams:</span><br><br>
                 {% if ownership_teams %}
-                    {% for team in ownership_teams %}
-                        {% include 'teams/render team/render_team.html' %}
-                    {% endfor %}
+                {% include 'teams/render team/main.html' with teams=ownership_teams %}
                 {% else %}
-                    You dont have a Team!
+                You don't have a Team!
                 {% endif %}
             </div>
             <div class="col-md justify-content-center text-center">

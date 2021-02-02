@@ -6,8 +6,10 @@
     <button class="btn btn-outline-dark">Delete</button>
 </a>
 {% else %}
-<form method="post" action="{% url 'teams:leave_team' team.team.title %}">
-    {% csrf_token %}
+<a style="display: inline-block;" href="{% url 'teams:manage_team' team.team.title %}">
+    <button class="btn btn-outline-dark">View</button>
+</a>
+<a style="display: inline-block; padding: 5px;" href="{% url 'teams:leave_team' team.team.title %}">
     <button class="btn btn-outline-dark">Leave</button>
-</form>
+</a>
 {% endif %}

@@ -17,9 +17,8 @@ class InitializeTeamMixin:
 
         self.is_trusted = self.team.owner == self.request.user
 
-        if self.admin_only:
-            if not self.is_trusted:
-                raise Http404
+        if self.admin_only and not self.is_trusted:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -39,7 +38,6 @@ class InitializeUserMixin:
         if not self.user:
             raise Http404
 
-        if self.admin_only:
-            if self.is_trusted:
-                raise Http404
+        if self.admin_only and not self.is_trusted:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)

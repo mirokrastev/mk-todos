@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}<title>Manage Team | MK-TODOS</title>{% endblock title %}
 
@@ -9,15 +10,32 @@
         {% endfor %}
         <div class="row">
             <div class="col-md">
-                <span>All Users:</span><br><br>
+                All Users:<br><br>
                 {% for user in users %}
-                    {% include 'teams/management/render/render_user.html' %}
+                    {% include 'teams/management/render/render_user.html' %}<br>
                 {% endfor %}
             </div>
-            <div class="col-md">
+        {% if is_trusted %}
+            <div class="col-md justify-content-center border-left text-center">
                 <span>Change Team identifier:</span><br><br>
+                <form method="post" action="{% url 'teams:change_identifier' team %}">
+                {% csrf_token %}
                 {{ identifier_form.as_p }}
+                </form>
+                <br><hr><br>
+                <div class="col-md justify-content-center text-center">
+                    <span>Change Team name:</span><br><br>
+                    <form method="post" action="{% url 'teams:change_name' team %}">
+                    {% csrf_token %}
+                    {{ name_form.as_p }}
+                    </form>
+                </div>
             </div>
         </div>
+        {% endif %}
     </div>
 {% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'teams/js/teams_functionality.js' %}"></script>
+{% endblock scripts %}

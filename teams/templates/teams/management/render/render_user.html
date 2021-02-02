@@ -1,4 +1,6 @@
-<span>
+<div>
     {{ user }}
+    {% if is_trusted and user != owner %}
     {% include 'teams/management/render/partial.html' %}
-</span>
+    {% endif %}
+</div>

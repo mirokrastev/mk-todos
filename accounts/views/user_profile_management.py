@@ -18,6 +18,7 @@ from django.urls import reverse_lazy
 from accounts.common import upload_new_picture
 
 
+# TODO: CHECK BIO CSS AND JS!
 class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,8 +66,8 @@ class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
 
     def alter_form(self, instance):
         dd = {
-            True: f'How do you feel today, {self.username} :)',
-            False: f'{self.username} has no bio.',
+            True: f'How do you feel today, {self.user.username} :)',
+            False: f'{self.user.username} has no bio.',
         }
 
         if not self.is_trusted:

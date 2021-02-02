@@ -1,6 +1,6 @@
 from django import forms
 from teams.models import Team
-from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 
 
 class TeamForm(forms.ModelForm):
@@ -10,11 +10,7 @@ class TeamForm(forms.ModelForm):
             {"placeholder": "Enter Team name",
              "class": "main_input"}
         )
-
-    def clean_title(self):
-        title = self.cleaned_data['title']
-        if Team.objects.get_or_none(title=title):
-            raise ValidationError('Team with this name already exists!')
+        self.fields['title'].validators = [MinLengthValidator(2)]
 
     class Meta:
         model = Team
@@ -23,6 +19,7 @@ class TeamForm(forms.ModelForm):
 
 class TeamIdentifierForm(forms.Form):
     identifier = forms.CharField(max_length=20, required=True,
+                                 validators=[MinLengthValidator(6)],
                                  widget=forms.TextInput(
                                      attrs={'placeholder': 'Type the Team\'s identifier',
                                             'class': 'main_input'})
