@@ -28,6 +28,9 @@ urlpatterns = [
     # Auth
     path('accounts/', include('accounts.urls', namespace='accounts')),
 
+    # Team
+    path('teams/', include('teams.urls', namespace='teams')),
+
     # Todos
     path('todo/', include('todolist.urls', namespace='todo')),
 

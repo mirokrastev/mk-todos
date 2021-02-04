@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <br>
+    <div class="container text-center">
+        <h4>{% block warning %}{% endblock warning %}</h4>
+        <br>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="history.back();">Go back</button>
+        </div>
+
+        <div class="btn-group">
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger">{{ button_value }}</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

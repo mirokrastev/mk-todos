@@ -1,10 +1,16 @@
 from django.contrib import admin
-from .models import Task
+from .models import UserTodo, TeamTodo
 
 
-class TaskPanel(admin.ModelAdmin):
+class UserTodoPanel(admin.ModelAdmin):
     list_display = ('title', 'user')
     search_fields = ('title', 'user__username')
 
 
-admin.site.register(Task, TaskPanel)
+class TeamTodoPanel(admin.ModelAdmin):
+    list_display = ('title', 'team')
+    search_fields = ('title', 'team__title')
+
+
+admin.site.register(UserTodo, UserTodoPanel)
+admin.site.register(TeamTodo, TeamTodoPanel)

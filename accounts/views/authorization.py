@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import CreateView, FormView
 from django.contrib.auth import authenticate, login, logout
+from django.views.generic.base import ContextMixin
 from accounts.models import CustomUser
 from accounts.forms import LoginForm, CustomUserCreationForm
 from django.http import Http404
@@ -122,12 +123,18 @@ class LogOutView(View):
         return redirect('home')
 
 
-class DeleteProfileView(GenericDispatchMixin, View):
+class DeleteProfileView(GenericDispatchMixin, ContextMixin, View):
     def get(self, request):
-        return render(self.request, 'accounts/delete/profile_delete.html')
+        context = self.get_context_data()
+        return render(self.request, 'accounts/delete/profile_delete.html', context)
 
     def post(self, request):
         user = CustomUser.objects.get(username=self.request.user.username)
         logout(self.request)
         user.delete()
         return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_value'] = 'Delete'
+        return context
