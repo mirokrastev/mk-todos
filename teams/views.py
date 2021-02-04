@@ -1,16 +1,16 @@
-from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
-from django.views.generic.base import ContextMixin
 from teams.base import FullInitializer
 from teams.common import generate_identifier
 from teams.forms import TeamForm, TeamIdentifierForm
 from teams.models import Team, TeamJunction
+from django.views.generic.base import ContextMixin
 from utils.mixins import GenericDispatchMixin
 from utils.http import Http400
 from utils.base import BaseRedirectFormView
 from teams.mixins import InitializeTeamMixin
+from django.db import IntegrityError
 
 
 class TeamHomeView(ContextMixin, GenericDispatchMixin, View):
@@ -30,7 +30,7 @@ class TeamHomeView(ContextMixin, GenericDispatchMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
-        return render(self.request, 'teams/team_home.html', context)
+        return render(self.request, 'teams/home/team_home.html', context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -110,7 +110,7 @@ class JoinTeam(BaseRedirectFormView):
 class LeaveTeam(FullInitializer, ContextMixin, GenericDispatchMixin, View):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
-        return render(self.request, 'teams/management/leave_team.html', context)
+        return render(self.request, 'teams/home/leave_team.html', context)
 
     def post(self, request, *args, **kwargs):
         self.user.delete()
@@ -118,7 +118,7 @@ class LeaveTeam(FullInitializer, ContextMixin, GenericDispatchMixin, View):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'team': self.kwargs['team'],
+        context.update({'team': self.team,
                         'button_value': 'Leave'})
         return context
 
@@ -128,7 +128,7 @@ class KickUser(FullInitializer, ContextMixin, GenericDispatchMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
-        return render(self.request, 'teams/kick_user.html', context)
+        return render(self.request, 'teams/management/kick_user.html', context)
 
     def post(self, request, *args, **kwargs):
         self.user.delete()
@@ -141,15 +141,21 @@ class KickUser(FullInitializer, ContextMixin, GenericDispatchMixin, View):
         return context
 
 
-class DeleteTeam(InitializeTeamMixin, GenericDispatchMixin, View):
+class DeleteTeam(InitializeTeamMixin, ContextMixin, GenericDispatchMixin, View):
     admin_only = True
 
     def get(self, request, *args, **kwargs):
-        return render(self.request, 'teams/delete/team_delete.html')
+        context = self.get_context_data()
+        return render(self.request, 'teams/home/team_delete.html', context)
 
     def post(self, request, *args, **kwargs):
         self.team.delete()
         return redirect('teams:team_home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button_value'] = 'Delete'
+        return context
 
 
 class ChangeTeamIdentifier(InitializeTeamMixin, BaseRedirectFormView):

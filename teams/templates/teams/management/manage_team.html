@@ -15,24 +15,10 @@
                     {% include 'teams/management/render/render_user.html' %}<br>
                 {% endfor %}
             </div>
-        {% if is_trusted %}
-            <div class="col-md justify-content-center border-left text-center">
-                <span>Change Team identifier:</span><br><br>
-                <form method="post" action="{% url 'teams:change_identifier' team %}">
-                {% csrf_token %}
-                {{ identifier_form.as_p }}
-                </form>
-                <br><hr><br>
-                <div class="col-md justify-content-center text-center">
-                    <span>Change Team name:</span><br><br>
-                    <form method="post" action="{% url 'teams:change_name' team %}">
-                    {% csrf_token %}
-                    {{ name_form.as_p }}
-                    </form>
-                </div>
-            </div>
+            {% if is_trusted %}
+                {% include 'teams/management/render/owner_team_control.html' %}
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 {% endblock content %}
 

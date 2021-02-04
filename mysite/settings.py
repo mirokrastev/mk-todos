@@ -22,7 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
 
 PASSWORD_RESET_TIMEOUT = 7200
 
@@ -157,3 +156,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 if DEBUG is False:
     SECURE_SSL_REDIRECT = True
+    CSRF_COOKIE_SECURE = True
