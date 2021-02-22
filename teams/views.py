@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
+from django.core.cache import cache
 from teams.base import FullInitializer
 from teams.common import generate_identifier
 from teams.forms import TeamForm, TeamIdentifierForm
@@ -21,10 +22,10 @@ class TeamHomeView(ContextMixin, GenericDispatchMixin, View):
         self.errors = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.all_teams = TeamJunction.objects.filter(user=self.request.user)
+        self.all_teams = cache.get(self.request.user)['user_teams']
         self.ownership_teams = [team
                                 for team in self.all_teams
-                                if team.team.owner == self.request.user]
+                                if team.owner == self.request.user]
         self.errors = self.request.session.pop('errors', None)
         return super().dispatch(request, *args, **kwargs)
 

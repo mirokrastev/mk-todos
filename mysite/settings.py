@@ -21,8 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
 
-SESSION_COOKIE_SECURE = True
-
 PASSWORD_RESET_TIMEOUT = 7200
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -55,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'utils.caching.CacheMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -70,7 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'accounts.context_processors.dark_mode',
+                'utils.context_processors.generic',
             ],
         },
     },
@@ -157,3 +156,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 if DEBUG is False:
     SECURE_SSL_REDIRECT = True
     CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True

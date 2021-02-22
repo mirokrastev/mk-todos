@@ -4,61 +4,61 @@ from teams.models import TeamJunction
 from todolist.models import UserTodo, TeamTodo
 
 
-class GetRequestsMixin:
-    ORDER_BY = {'oldest': 'date_created', 'newest': '-date_created'}
-
-    def make_query_params(self):
-        page = self.request.GET.get('page', 1)
-        order = self.ORDER_BY[self.request.GET.get('order_by', 'newest')]
-        word = self.request.GET.get('q', None)
-
-        return page, order, word
-
-
 class PaginateObjectMixin:
+    per_page = None
+
     def paginate(self, obj, page):
         if not obj:
             return None
-        paginator = Paginator(obj, per_page=4)
+        paginator = Paginator(obj, per_page=self.per_page)
         paginated_obj = paginator.page(page)
-        if len(paginated_obj.object_list) > 1:
-            paginated_obj.object_list[0].is_first = True
         return paginated_obj
 
-
-class FilterTodosMixin:
-    def filter_todos(self, order, word, is_null=True):
-        if not self.request.user.is_authenticated:
-            return None
-
-        params = {'date_completed__isnull': is_null}
-        if word:
-            params.update({'title__icontains': word})
-
-        user_todos = UserTodo.objects.filter(user=self.request.user, **params).order_by(order)
-        return user_todos
-        # TODO: IMPLEMENT TEAM TODOS, IMPLEMENT WITH CACHE SYSTEM FOR FASTER READ!
-        # user_teams = TeamJunction.objects.filter(user=self.request.user)
-        # user_team_todos = [todo
-        #                  for query in user_teams
-        #                  for todo in TeamTodo.objects.filter(team=query.team)]
+    # if len(paginated_obj.object_list) > 1:
+        # paginated_obj.object_list[0].is_first = True
 
 
 class GetSingleTodoMixin:
-    def get_object(self):
+    """
+    To return an instance of TeamTodo, in the implementation add team_todo = True.
+    To work, you need to pass the team in the url.
+    """
+    team_todo = False
+
+    def get_object(self, *args, **kwargs):
+        if not self.team_todo:
+            return self.__get_user_todo()
+        return self.__get_team_todo()
+
+    def __get_user_todo(self):
         try:
-            return UserTodo.objects.get(pk=self.kwargs['task_pk'], user=self.request.user)
+            return UserTodo.objects.get(pk=self.kwargs['task_pk'],
+                                        title=self.kwargs['name'],
+                                        user=self.request.user)
         except (UserTodo.DoesNotExist, ValueError):
+            return None
+
+    def __get_team_todo(self):
+        try:
+            team = TeamJunction.objects.get(user=self.request.user, team__title=self.kwargs['team']).team
+            return TeamTodo.objects.get(pk=self.kwargs['task_pk'],
+                                        title=self.kwargs['name'],
+                                        team=team)
+        except (TeamJunction.DoesNotExist, TeamTodo.DoesNotExist, ValueError):
             return None
 
 
 class InitializeTodoMixin(GetSingleTodoMixin):
+    post_only = True
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.task = None
+        self.todo = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.task = self.get_object()
-        if not self.request.method == 'POST' or not self.task:
+        self.todo = self.get_object()
+        if not self.todo:
+            raise Http404
+        if self.post_only and not self.request.method == 'POST':
             raise Http404
         return super().dispatch(request, *args, **kwargs)

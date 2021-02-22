@@ -6,19 +6,12 @@
 <div class="container text-center">
     {% if message %}<br><div class="alert alert-primary">{{ message }}</div>{% endif %}
     <br>
-    {% for todo in todos %}
-        {% if todo.is_first %}{% include 'todolist/sort_button.html' %}{% endif %}
-        {% include 'home/render_todo.html' %}
-    {% endfor %}
-    {% if user.is_authenticated %}
-        {% if not todos %}
-            <h4>Congrats, you don't have any tasks!</h4>
-            <p>Go ahead and create one, if you have! </p>
-        {% endif %}
-        {% include 'pagination/paginator.html' %}
+    {% if request.user.is_authenticated %}
+        {% include 'home/logged in/main.html' %}
     {% else %}
-        <h3>Welcome to my Todo site!</h3>
-        <h3>You need to be registered to start creating your todos! :)</h3>
+        {% include 'home/logged out/main.html' %}
     {% endif %}
+{{ has_team }}
+{{ dark_mode }}
 </div>
 {% endblock content %}
