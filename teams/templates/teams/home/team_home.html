@@ -3,6 +3,10 @@
 
 {% block title %}<title>Team Management | MK-TODOS</title>{% endblock title %}
 
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+{% endblock links %}
+
 {% block content %}<br>
     <div class="container">
     {% for error in errors %}

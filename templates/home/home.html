@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}<title>Home | MK-TODOS</title>{% endblock title %}
+
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+{% endblock links %}
 
 {% block content %}
 <div class="container text-center">
@@ -11,7 +16,5 @@
     {% else %}
         {% include 'home/logged out/main.html' %}
     {% endif %}
-{{ has_team }}
-{{ dark_mode }}
 </div>
 {% endblock content %}

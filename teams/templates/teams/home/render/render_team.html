@@ -1,8 +1,8 @@
 {% for team in teams %}
     {% if team.owner == request.user %}
-        <div class="card bg-warning mb-3" style="font-weight: 600; width: 10rem; margin: 0 auto; color: #3911d9;">
+        <div class="card bg-warning mb-3 base-card-style important-card-style" style="width: 10rem;">
     {% else %}
-        <div class="card bg-secondary mb-3" style="width: 10rem; margin: 0 auto; color: #cfd9e8;">
+        <div class="card bg-secondary mb-3 base-card-style unimportant-card-style" style="width: 10rem;">
     {% endif %}
     <div class="card-header">{{ team.title }}</div>
     <div class="card-body">

@@ -32,8 +32,8 @@ class GetSingleTodoMixin:
 
     def __get_user_todo(self):
         try:
-            return UserTodo.objects.get(pk=self.kwargs['task_pk'],
-                                        title=self.kwargs['name'],
+            return UserTodo.objects.get(pk=self.kwargs['todo_pk'],
+                                        title=self.kwargs['todo_title'],
                                         user=self.request.user)
         except (UserTodo.DoesNotExist, ValueError):
             return None
@@ -41,8 +41,8 @@ class GetSingleTodoMixin:
     def __get_team_todo(self):
         try:
             team = TeamJunction.objects.get(user=self.request.user, team__title=self.kwargs['team']).team
-            return TeamTodo.objects.get(pk=self.kwargs['task_pk'],
-                                        title=self.kwargs['name'],
+            return TeamTodo.objects.get(pk=self.kwargs['todo_pk'],
+                                        title=self.kwargs['todo_title'],
                                         team=team)
         except (TeamJunction.DoesNotExist, TeamTodo.DoesNotExist, ValueError):
             return None
