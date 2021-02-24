@@ -1,0 +1,27 @@
+{% load static %}
+
+{% if todo.important %}
+<div class="card bg-warning mb-3 base-card-style important-card-style">
+{% else %}
+<div class="card bg-secondary mb-3 base-card-style unimportant-card-style">
+{% endif %}
+<div class="card-header">{{ todo.title }}</div>
+    <div class="card-body text-center">
+        <p class="card-text">{{ todo.memo|truncatechars:25 }}</p>
+        <div style="display: inline-block;">
+            <small style="float: left;" class="card-text">{{ todo.date_created|date:'j-n-Y H:i' }}</small>
+            {% if team_todo %}
+            <br>
+            <small class="card-text">Team: {{ todo.team }}</small>
+            <a href="{% url 'teams:team_detailed_todo' todo.team todo.id todo.title %}">
+                <button class="btn btn-outline-dark card-button">Edit</button>
+            </a>
+            {% else %}
+                <a href="{% url 'todo:user_detailed_todo' todo.id todo.title %}">
+                    <button class="btn btn-outline-dark card-button">Edit</button>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<hr>

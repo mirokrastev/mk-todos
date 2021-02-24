@@ -16,9 +16,8 @@ urlpatterns = [
     path('<str:team>/name/', login_required(ChangeTeamName.as_view()), name='change_name'),
 
     path('<str:team>/leave/', login_required(LeaveTeam.as_view()), name='leave_team'),
+    path('<str:team>/leave/<str:user>/', login_required(KickUser.as_view()), name='kick_user'),
     path('<str:team>/delete/', login_required(DeleteTeam.as_view()), name='delete_team'),
-
-    path('<str:team>/<str:user>/', login_required(KickUser.as_view()), name='kick_user'),
 ]
 
 # TODO: SLUGIFY URL!

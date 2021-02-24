@@ -1,0 +1,17 @@
+.base-card-style {
+    width: 15rem;
+    margin: 0 auto;
+}
+
+.important-card-style {
+    font-weight: 600;
+    color: #3911d9
+}
+
+.unimportant-card-style {
+    color: #cfd9e8;
+}
+
+.card-button {
+    margin-left: 20px;
+}

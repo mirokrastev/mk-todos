@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from mysite.settings import DEBUG
-from todolist.views.home_view import HomeView
+from todolist.views.home_view import TodoHomeView
 import os
 
 urlpatterns = [
@@ -35,7 +35,7 @@ urlpatterns = [
     path('todo/', include('todolist.urls', namespace='todo')),
 
     # Home
-    path('', HomeView.as_view(), name='home'),
+    path('', TodoHomeView.as_view(), name='home'),
 ]
 
 if DEBUG is True:

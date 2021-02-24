@@ -1,0 +1,19 @@
+{% if user_todos or team_todos %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm border-right">
+                {% for todo in user_todos %}
+                    {% include 'home/logged in/render_todo.html' %}
+                {% endfor %}
+            </div>
+            <div class="col-sm border-left">
+                {% for todo in team_todos %}
+                    {% include 'home/logged in/render_todo.html' with team_todo=True %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <h4>Congrats, you don't have any todos!</h4>
+    <p>Go ahead and create one, if you have! </p>
+{% endif %}

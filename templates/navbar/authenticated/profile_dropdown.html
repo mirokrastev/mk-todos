@@ -7,7 +7,7 @@
                 {{ user }}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{% url 'accounts:my_profile' request.user.username %}">My profile</a>
+                <a class="dropdown-item" href="{% url 'accounts:my_profile' request.user %}">My profile</a>
                 <a class="dropdown-item" href="{% url 'teams:team_home' %}">My teams</a>
                 {% include 'navbar/authenticated/admin_panel.html' %}
                 <div class="dropdown-divider"></div>

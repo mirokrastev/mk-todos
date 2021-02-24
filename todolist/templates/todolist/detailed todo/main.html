@@ -17,7 +17,11 @@
             <button class="btn btn-primary">Update</button>
         </form>
         <br>
-        {% include 'todolist/detailed todo/todo_actions.html' %}
+        {% if team_todo %}
+            {% include 'todolist/detailed todo/team/team_actions.html' %}
+        {% else %}
+            {% include 'todolist/detailed todo/user/user_actions.html' %}
+        {% endif %}
     </div>
 </div>
 {% endblock content %}
