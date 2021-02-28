@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save, pre_delete, post_delete
 from accounts.models import CustomUser, UserProfile
 from accounts.common import delete_image
+from utils.caching import set_cache
 from teams.models import TeamJunction
 
 
@@ -36,3 +37,4 @@ def clear_cache(sender, instance, **kwargs):
     else:
         user = instance.user
     cache.delete(user)
+    set_cache(user)

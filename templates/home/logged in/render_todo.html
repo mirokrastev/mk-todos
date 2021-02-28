@@ -13,11 +13,11 @@
             {% if team_todo %}
             <br>
             <small class="card-text">Team: {{ todo.team }}</small>
-            <a href="{% url 'teams:team_detailed_todo' todo.team todo.id todo.title %}">
+            <a href="{% url 'teams:team_detailed_todo' todo.team todo.id todo.title|slugify %}">
                 <button class="btn btn-outline-dark card-button">Edit</button>
             </a>
             {% else %}
-                <a href="{% url 'todo:user_detailed_todo' todo.id todo.title %}">
+                <a href="{% url 'todo:user_detailed_todo' todo.id todo.title|slugify %}">
                     <button class="btn btn-outline-dark card-button">Edit</button>
                 </a>
             {% endif %}

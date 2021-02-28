@@ -18,14 +18,13 @@ from django.urls import reverse_lazy
 from accounts.common import upload_new_picture
 
 
-# TODO: CHECK BIO CSS AND JS!
 class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.user: CustomUser = None
-        self.profile: UserProfile = None
-        self.is_trusted: bool = None
+        self.user = None
+        self.profile = None
+        self.is_trusted = None
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.method not in ('GET', 'POST'):
@@ -49,7 +48,7 @@ class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
 
     def post(self, request, *args, **kwargs):
         if not self.is_trusted:
-            raise Http404
+            raise Http400
 
         new_picture = self.request.FILES.get('avatar', None)
         bio = self.request.POST.get('bio', None)
