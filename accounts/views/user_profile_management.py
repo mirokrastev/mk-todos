@@ -18,7 +18,7 @@ from django.urls import reverse_lazy
 from accounts.common import upload_new_picture
 
 
-class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
+class UserProfileView(GenericDispatchMixin, EnableSearchBarMixin, GetUsernameMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -27,9 +27,6 @@ class UserProfileView(EnableSearchBarMixin, GetUsernameMixin, View):
         self.is_trusted = None
 
     def dispatch(self, request, *args, **kwargs):
-        if self.request.method not in ('GET', 'POST'):
-            raise Http400
-
         username = self.get_username(kwargs)
         try:
             self.user = CustomUser.objects.get(username=username)
