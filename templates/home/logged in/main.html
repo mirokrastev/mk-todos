@@ -5,11 +5,13 @@
                 {% for todo in user_todos %}
                     {% include 'home/logged in/render_todo.html' %}
                 {% endfor %}
+                {% include 'pagination/paginator.html' with query_key='u_page' object=user_todos %}
             </div>
             <div class="col-sm border-left">
                 {% for todo in team_todos %}
                     {% include 'home/logged in/render_todo.html' with team_todo=True %}
                 {% endfor %}
+                {% include 'pagination/paginator.html' with query_key='t_page' object=team_todos %}
             </div>
         </div>
     </div>

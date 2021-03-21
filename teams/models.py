@@ -24,6 +24,6 @@ class TeamJunction(models.Model):
     user = models.ForeignKey(db_index=True, to=CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.user.username}:{self.team.title}'
+        return self.user.username
 
     objects = TeamManager()

@@ -14,6 +14,7 @@
                 {% for user in users %}
                     {% include 'teams/management/render/render_user.html' %}<br>
                 {% endfor %}
+                {% include 'pagination/paginator.html' with object=users %}
             </div>
             {% if is_trusted %}
                 {% include 'teams/management/render/owner_team_control.html' %}

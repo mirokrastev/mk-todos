@@ -1,6 +1,6 @@
 <div>
     {{ user }}
-    {% if is_trusted and user != owner %}
+    {% if is_trusted and user|slugify != owner %}
     <form method="post" action="{% url 'teams:kick_user' team user %}">
         {% csrf_token %}
         <button>Kick</button>

@@ -7,7 +7,7 @@ from teams.common import generate_identifier
 from teams.forms import TeamForm, TeamIdentifierForm
 from teams.models import Team, TeamJunction
 from django.views.generic.base import ContextMixin
-from utils.mixins import GenericDispatchMixin
+from utils.mixins import GenericDispatchMixin, PaginateObjectMixin
 from utils.http import Http400
 from utils.base import BaseRedirectFormView
 from teams.mixins import InitializeTeamMixin
@@ -43,7 +43,10 @@ class TeamHomeView(ContextMixin, GenericDispatchMixin, View):
         return context
 
 
-class ManageTeam(FullInitializer, ContextMixin, View):
+class ManageTeam(InitializeTeamMixin, PaginateObjectMixin, ContextMixin, View):
+    per_page = 8
+    orphans = 2
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.errors = None
@@ -60,16 +63,20 @@ class ManageTeam(FullInitializer, ContextMixin, View):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        page = self.request.GET.get('page', 1)
+        users = self.paginate(TeamJunction.objects.filter(team=self.team).only('user'), page)
+
         context.update({'team': self.team,
-                        'owner': self.team.owner,
-                        'users': [entry.user for entry in TeamJunction.objects.filter(team=self.team)],
+                        'owner': self.team.owner.username,
+                        'users': users,
                         'errors': self.errors,
-                        'is_trusted': self.is_trusted})
+                        'is_trusted': self.is_trusted,
+                        'is_paginated': bool(users)})
 
         if self.is_trusted:
             context.update({'identifier_form': TeamIdentifierForm(initial={'identifier': self.team.identifier}),
                             'name_form': TeamForm(instance=self.team)})
-
         return context
 
 

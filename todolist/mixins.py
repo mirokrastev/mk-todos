@@ -1,21 +1,6 @@
-from django.core.paginator import Paginator
 from django.http import Http404
 from teams.models import TeamJunction
 from todolist.models import UserTodo, TeamTodo
-
-
-class PaginateObjectMixin:
-    per_page = None
-
-    def paginate(self, obj, page):
-        if not obj:
-            return None
-        paginator = Paginator(obj, per_page=self.per_page)
-        paginated_obj = paginator.page(page)
-        return paginated_obj
-
-    # if len(paginated_obj.object_list) > 1:
-        # paginated_obj.object_list[0].is_first = True
 
 
 class GetSingleTodoMixin:

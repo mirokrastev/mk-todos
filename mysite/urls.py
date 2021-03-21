@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from mysite.settings import DEBUG
-from todolist.views.home_view import TodoHomeView
+from todolist.views.home import TodoHomeView
 import os
 
 urlpatterns = [
