@@ -1,24 +1,18 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth.views import (
-    PasswordResetView, PasswordResetDoneView,
-    PasswordResetConfirmView, PasswordResetCompleteView
-)
 from django.views.generic import FormView
+from django.views.generic.base import ContextMixin
+from django.contrib.auth import logout
 from accounts.models import CustomUser, UserProfile
-from accounts.forms import (
-    CustomPasswordChangeForm, CustomSetPasswordForm,
-    UserProfileForm, CustomPasswordResetForm
-)
+from accounts.forms import CustomPasswordChangeForm, UserProfileForm
 from django.http import Http404
 from utils.http import Http400
-from accounts.mixins import GetUsernameMixin
 from utils.mixins import GenericDispatchMixin, EnableSearchBarMixin
 from django.urls import reverse_lazy
 from accounts.common import upload_new_picture
 
 
-class UserProfileView(GenericDispatchMixin, EnableSearchBarMixin, GetUsernameMixin, View):
+class UserProfileView(GenericDispatchMixin, EnableSearchBarMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -27,7 +21,11 @@ class UserProfileView(GenericDispatchMixin, EnableSearchBarMixin, GetUsernameMix
         self.is_trusted = None
 
     def dispatch(self, request, *args, **kwargs):
-        username = self.get_username(kwargs)
+        if 'q' in self.request.GET:
+            username = self.request.GET['q']
+            return redirect(reverse_lazy('accounts:my_profile', kwargs={'username': username}))
+
+        username = self.kwargs['username']
         try:
             self.user = CustomUser.objects.get(username=username)
             self.profile = UserProfile.objects.get(user=self.user)
@@ -106,64 +104,32 @@ class PasswordChange(GenericDispatchMixin, FormView):
         return context
 
 
-class CustomPasswordResetView(PasswordResetView):
-    form_class = CustomPasswordResetForm
-    template_name = 'accounts/reset/password_reset_form.html'
-    success_url = reverse_lazy('accounts:password_reset_done')
-    email_template_name = 'accounts/reset/password_reset_email.html'
+class DeleteProfileView(GenericDispatchMixin, ContextMixin, View):
+    def get(self, request):
+        context = self.get_context_data()
+        return render(self.request, 'accounts/delete/profile_delete.html', context)
 
-    def form_valid(self, form):
-        self.request.session['is_trusted'] = True
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['button_value'] = 'Submit'
-        return context
-
-
-class CustomPasswordResetDoneView(PasswordResetDoneView):
-    template_name = 'accounts/reset/password_reset_done.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.session.pop('is_trusted', False) is False:
-            raise Http404
-        return super().dispatch(request, *args, **kwargs)
-
-
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    form_class = CustomSetPasswordForm
-    template_name = 'accounts/reset/password_reset_confirm.html'
-    success_url = reverse_lazy('accounts:password_reset_complete')
-
-    def form_valid(self, form):
-        self.request.session['is_trusted'] = True
-        return super().form_valid(form)
+    def post(self, request):
+        user = CustomUser.objects.get(username=self.request.user.username)
+        logout(self.request)
+        user.delete()
+        return redirect('home')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['button_value'] = 'Reset'
+        context['button_value'] = 'Delete'
         return context
-
-
-class CustomPasswordResetCompleteView(PasswordResetCompleteView):
-    template_name = 'accounts/reset/password_reset_complete.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.session.pop('is_trusted', False) is False:
-            raise Http404
-        return super().dispatch(request, *args, **kwargs)
 
 
 class ChangeTheme(View):
     def dispatch(self, request, *args, **kwargs):
-        if not self.request.method == 'GET':
+        if not self.request.method == 'POST':
             raise Http400
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, *args, **kwargs):
-        to_redirect = self.request.GET['next']
-        user = UserProfile.objects.get(user=self.request.user)
-        user.dark_mode = not user.dark_mode
-        user.save()
+    def post(self, *args, **kwargs):
+        to_redirect = self.request.META['HTTP_REFERER']
+        userprofile = UserProfile.objects.get(user=self.request.user)
+        userprofile.dark_mode = not userprofile.dark_mode
+        userprofile.save()
         return redirect(to_redirect)

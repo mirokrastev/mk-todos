@@ -1,9 +1,11 @@
 <div>
-    {{ user }}
+    <span>
+        <a href="{% url 'accounts:my_profile' user %}">{{ user }}</a>
     {% if is_trusted and user|slugify != owner %}
-    <form method="post" action="{% url 'teams:kick_user' team user %}">
+    <form class="user-kick-style" method="post" action="{% url 'teams:kick_user' team user %}">
         {% csrf_token %}
         <button>Kick</button>
     </form>
     {% endif %}
+    </span>
 </div>

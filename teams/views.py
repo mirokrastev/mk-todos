@@ -7,14 +7,14 @@ from teams.common import generate_identifier
 from teams.forms import TeamForm, TeamIdentifierForm
 from teams.models import Team, TeamJunction
 from django.views.generic.base import ContextMixin
-from utils.mixins import GenericDispatchMixin, PaginateObjectMixin
+from utils.mixins import GenericDispatchMixin, PaginateObjectMixin, EnableSearchBarMixin
 from utils.http import Http400
 from utils.base import BaseRedirectFormView
 from teams.mixins import InitializeTeamMixin
 from django.db import IntegrityError
 
 
-class TeamHomeView(ContextMixin, GenericDispatchMixin, View):
+class TeamHomeView(EnableSearchBarMixin, ContextMixin, GenericDispatchMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.all_teams = None

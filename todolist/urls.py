@@ -32,7 +32,7 @@ teams_urlpatterns += [
     path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/', login_required(team.TeamDetailedTodo.as_view()),
          name='team_detailed_todo'),
 
-    path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/complete/',login_required(generic.CompleteTodo.as_view()),
+    path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/complete/', login_required(generic.CompleteTodo.as_view()),
          name='team_complete_todo'),
 
     path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/reopen/', login_required(generic.ReopenTodo.as_view()),

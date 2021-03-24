@@ -1,7 +1,10 @@
+<form method="post" action="{% url 'accounts:change_theme' %}">
+{% csrf_token %}
 {% if dark_mode %}
-    <a class="dropdown-item" href="{% url 'accounts:change_theme' %}?next={{ request.get_full_path }}">Light mode</a>
+    <a style="cursor: pointer;" onclick="parentNode.submit();" class="dropdown-item">Light mode</a>
 {% else %}
-    <a class="dropdown-item" href="{% url 'accounts:change_theme' %}?next={{ request.get_full_path }}">Dark mode</a>
+    <a style="cursor: pointer;" onclick="parentNode.submit();" class="dropdown-item">Dark mode</a>
 {% endif %}
+</form>
 <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
 <a class="dropdown-item" href="{% url 'accounts:delete_profile' %}" style="color: red;">Delete profile</a>

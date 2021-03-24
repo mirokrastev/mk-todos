@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'teams/css/teams_style.css' %}">
+{% endblock links %}
 {% block title %}<title>Manage Team | MK-TODOS</title>{% endblock title %}
 
 {% block content %}<br>
