@@ -1,4 +1,4 @@
-from teams.models import Team, TeamJunction
+from teams.models import Team, TeamJunction, PendingUser
 from django.http import Http404
 
 
@@ -26,7 +26,12 @@ class InitializeUserMixin:
     """
     This Mixin requires InitializeTeamMixin to work.
     NOTE: The correct inheritance order is InitializeTeamMixin, InitializeUserMixin!
+
+    Pending attr is if you are querying user that is in pending process, e.g. in PendingUser model.
     """
+
+    pending = False
+
     def __init__(self):
         super().__init__()
         self.user = None
@@ -34,6 +39,9 @@ class InitializeUserMixin:
     def dispatch(self, request, *args, **kwargs):
         username = self.kwargs.get('user', None) or self.request.user.username
         self.user = TeamJunction.objects.get_or_none(team=self.team, user__username=username)
+
+        if self.pending:
+            self.user = self.user or PendingUser.objects.get_or_none(team=self.team, user__username=username)
 
         if not self.user:
             raise Http404

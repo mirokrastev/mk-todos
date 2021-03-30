@@ -12,6 +12,9 @@
     {% for error in errors %}
         <div class="alert alert-danger">{{ error }}</div>
     {% endfor %}
+    {% if message %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endif %}
         <div class="row">
             <div class="col-md border-right justify-content-center text-center">
                 <span>All Teams:</span><br><br>

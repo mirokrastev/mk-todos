@@ -19,11 +19,22 @@ class Team(models.Model):
     objects = TeamManager()
 
 
-class TeamJunction(models.Model):
+class BaseJunctionTable(models.Model):
     team = models.ForeignKey(db_index=True, to=Team, on_delete=models.CASCADE)
     user = models.ForeignKey(db_index=True, to=CustomUser, on_delete=models.CASCADE)
+
+    objects = TeamManager()
 
     def __str__(self):
         return self.user.username
 
-    objects = TeamManager()
+    class Meta:
+        abstract = True
+
+
+class TeamJunction(BaseJunctionTable):
+    pass
+
+
+class PendingUser(BaseJunctionTable):
+    pass

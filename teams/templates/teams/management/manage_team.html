@@ -14,13 +14,22 @@
         <div class="row">
             <div class="col-md">
                 All Users:<br><br>
-                {% for user in users %}
+                {% for user in joined_users %}
                     {% include 'teams/management/render/render_user.html' %}<br>
                 {% endfor %}
-                {% include 'pagination/paginator.html' with object=users %}
+                {% include 'pagination/paginator.html' with object=joined_users query_key='u_page' %}
             </div>
             {% if is_trusted %}
-                {% include 'teams/management/render/owner_team_control.html' %}
+                {% if pending_users %}
+                <div class="col-md border-left">
+                    Pending Users:<br><br>
+                    {% for user in pending_users %}
+                        {% include 'teams/management/render/render_user.html' with pending=True %}
+                    {% endfor %}
+                    {% include 'pagination/paginator.html' with object=pending_users query_key='p_page' %}
+                </div>
+                {% endif %}
+            {% include 'teams/management/render/owner_team_control.html' %}
             {% endif %}
         </div>
     </div>

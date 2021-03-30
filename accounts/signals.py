@@ -4,7 +4,7 @@ from django.db.models.signals import pre_save, post_save, pre_delete, post_delet
 from accounts.models import CustomUser, UserProfile
 from accounts.common import delete_image
 from utils.caching import set_cache
-from teams.models import TeamJunction
+from teams.models import TeamJunction, Team
 
 
 @receiver(pre_save, sender=CustomUser)
@@ -29,12 +29,13 @@ def delete_user_avatar(sender, instance, **kwargs):
 
 @receiver([post_save, post_delete])
 def clear_cache(sender, instance, **kwargs):
-    if sender not in (TeamJunction, UserProfile):
+    if sender not in (Team, TeamJunction, UserProfile):
         return
 
-    if isinstance(sender, UserProfile):
-        user = instance
+    if isinstance(instance, Team):
+        user = instance.owner
     else:
         user = instance.user
+
     cache.delete(user)
     set_cache(user)

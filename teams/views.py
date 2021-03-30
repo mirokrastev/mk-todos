@@ -5,7 +5,7 @@ from django.core.cache import cache
 from teams.base import FullInitializer
 from teams.common import generate_identifier
 from teams.forms import TeamForm, TeamIdentifierForm
-from teams.models import Team, TeamJunction
+from teams.models import Team, TeamJunction, PendingUser
 from django.views.generic.base import ContextMixin
 from utils.mixins import GenericDispatchMixin, PaginateObjectMixin, EnableSearchBarMixin
 from utils.http import Http400
@@ -20,13 +20,13 @@ class TeamHomeView(EnableSearchBarMixin, ContextMixin, GenericDispatchMixin, Vie
         self.all_teams = None
         self.ownership_teams = None
         self.errors = None
+        self.message = None
 
     def dispatch(self, request, *args, **kwargs):
         self.all_teams = cache.get(self.request.user)['user_teams']
-        self.ownership_teams = [team
-                                for team in self.all_teams
-                                if team.owner == self.request.user]
+        self.ownership_teams = self.all_teams.filter(owner=self.request.user)
         self.errors = self.request.session.pop('errors', None)
+        self.message = self.request.session.pop('message', None)
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -39,13 +39,14 @@ class TeamHomeView(EnableSearchBarMixin, ContextMixin, GenericDispatchMixin, Vie
                         'ownership_teams': self.ownership_teams,
                         'join_form': TeamIdentifierForm(),
                         'create_form': TeamForm(),
-                        'errors': self.errors})
+                        'errors': self.errors,
+                        'message': self.message})
         return context
 
 
 class ManageTeam(InitializeTeamMixin, PaginateObjectMixin, ContextMixin, View):
-    per_page = 8
-    orphans = 2
+    per_page = 5
+    orphans = 0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,18 +65,23 @@ class ManageTeam(InitializeTeamMixin, PaginateObjectMixin, ContextMixin, View):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        page = self.request.GET.get('page', 1)
-        users = self.paginate(TeamJunction.objects.filter(team=self.team).only('user'), page)
+        joined_users_page = self.request.GET.get('u_page', 1)
+        joined_users = self.paginate(TeamJunction.objects.filter(team=self.team).only('user'),
+                                     joined_users_page)
 
         context.update({'team': self.team,
                         'owner': self.team.owner.username,
-                        'users': users,
+                        'joined_users': joined_users,
                         'errors': self.errors,
-                        'is_trusted': self.is_trusted,
-                        'is_paginated': bool(users)})
+                        'is_trusted': self.is_trusted})
 
         if self.is_trusted:
-            context.update({'identifier_form': TeamIdentifierForm(initial={'identifier': self.team.identifier}),
+            pending_users_page = self.request.GET.get('p_page', 1)
+            pending_users = self.paginate(PendingUser.objects.filter(team=self.team).only('user'),
+                                          pending_users_page)
+
+            context.update({'pending_users': pending_users,
+                            'identifier_form': TeamIdentifierForm(initial={'identifier': self.team.identifier}),
                             'name_form': TeamForm(instance=self.team)})
         return context
 
@@ -97,22 +103,83 @@ class JoinTeam(BaseRedirectFormView):
     form_class = TeamIdentifierForm
     success_url = 'teams:team_home'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.errors = []
+
     def form_valid(self, form):
         identifier = form.cleaned_data['identifier']
 
         team = Team.objects.get_or_none(identifier=identifier)
-        already_joined = bool(TeamJunction.objects.get_or_none(team=team, user=self.request.user))
+        self.validate_entry(team)
 
-        if not team or already_joined:
-            errors = []
-            if not team:
-                errors.append('This identifier does not point to any team!')
-            if already_joined:
-                errors.append('You are already a member of this team!')
-            return self.form_invalid(errors)
+        if self.errors:
+            return self.form_invalid(self.errors)
 
-        TeamJunction.objects.create(team=team, user=self.request.user)
+        PendingUser.objects.create(team=team, user=self.request.user)
+        self.request.session['message'] = 'You have successfully applied to join this team! ' \
+                                          'Your request is pending.'
         return self.redirect()
+
+    def validate_entry(self, team: Team) -> None:
+        """
+        Validation method. It populates self.errors attribute. Returns None.
+        """
+        if not team:
+            self.errors.append('This identifier does not point to any team!')
+            return
+
+        pending = bool(PendingUser.objects.get_or_none(user=self.request.user,
+                                                       team=team))
+        if pending:
+            self.errors.append('Your request is pending.')
+            return
+
+        already_joined = bool(TeamJunction.objects.get_or_none(user=self.request.user,
+                                                               team=team))
+        if already_joined:
+            self.errors.append('You are already a member of this Team!')
+            return
+
+
+class AcceptUser(FullInitializer, View):
+    admin_only = True
+    pending = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.method == 'POST':
+            raise Http400
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.user.delete()
+        TeamJunction.objects.create(team=self.team, user=self.user.user)
+        return redirect(reverse('teams:manage_team', kwargs={'team': self.team}))
+
+
+class KickUser(FullInitializer, ContextMixin, GenericDispatchMixin, View):
+    """
+    Here, pending attr is True, because InitializeUserMixin is first looking in TeamJunction
+    and then in PendingUser table IF pending is True. IT could be that you are kicking user in a team, but
+    still including pending = True.
+    """
+
+    admin_only = True
+    pending = True
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        return render(self.request, 'teams/management/kick_user.html', context)
+
+    def post(self, request, *args, **kwargs):
+        self.user.delete()
+        return redirect(reverse('teams:manage_team', kwargs={'team': self.team}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'user': self.user,
+                        'button_value': 'Kick'})
+        return context
 
 
 class LeaveTeam(FullInitializer, ContextMixin, GenericDispatchMixin, View):
@@ -128,24 +195,6 @@ class LeaveTeam(FullInitializer, ContextMixin, GenericDispatchMixin, View):
         context = super().get_context_data(**kwargs)
         context.update({'team': self.team,
                         'button_value': 'Leave'})
-        return context
-
-
-class KickUser(FullInitializer, ContextMixin, GenericDispatchMixin, View):
-    admin_only = True
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        return render(self.request, 'teams/management/kick_user.html', context)
-
-    def post(self, request, *args, **kwargs):
-        self.user.delete()
-        return redirect(reverse('teams:manage_team', kwargs={'team': self.team}))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({'user': self.user,
-                        'button_value': 'Kick'})
         return context
 
 

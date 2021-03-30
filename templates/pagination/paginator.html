@@ -1,26 +1,24 @@
 {% load url_helper %}
 
-{% if is_paginated %}
-    {% if object.has_other_pages %}
-        <ul class="pagination">
-            {% include 'pagination/previous_page.html' %}
+{% if object.has_other_pages %}
+    <ul class="pagination">
+        {% include 'pagination/previous_page.html' %}
 
-            {% for page in object.paginator.page_range %}
-                {% if object.number == page %}
-                    <li class="active page-item">
-                        <a class="page-link">{{ page }}</a>
-                    </li>
-                {% else %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="{% relative_url query_key|default:"page" page request.GET.urlencode %}">
-                            {{ page }}
-                        </a>
-                    </li>
-                {% endif %}
-            {% endfor %}
+        {% for page in object.paginator.page_range %}
+            {% if object.number == page %}
+                <li class="active page-item">
+                    <a class="page-link">{{ page }}</a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="{% relative_url query_key|default:"page" page request.GET.urlencode %}">
+                        {{ page }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
 
-            {% include 'pagination/next_page.html' %}
-        </ul>
-    {% endif %}
+        {% include 'pagination/next_page.html' %}
+    </ul>
 {% endif %}

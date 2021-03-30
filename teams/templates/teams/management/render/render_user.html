@@ -6,6 +6,12 @@
         {% csrf_token %}
         <button>Kick</button>
     </form>
+    {% if pending %}
+        <form class="user-kick-style" method="post" action="{% url 'teams:accept_user' team user %}">
+        {% csrf_token %}
+        <button>Accept</button>
+    </form>
+    {% endif %}
     {% endif %}
     </span>
 </div>

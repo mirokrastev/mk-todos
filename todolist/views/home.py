@@ -65,7 +65,6 @@ class TodoHomeView(EnableSearchBarMixin, PaginateObjectMixin, View):
             'user_todos': self.todos['user'],
             'team_todos': self.todos['team'],
             'message': self.message,
-            'is_paginated': True,
         })
 
         return context
