@@ -1,5 +1,5 @@
-import os
 from django import template
+from decouple import config
 
 register = template.Library()
 
@@ -34,4 +34,4 @@ def relative_url(querystring_key, querystring_value, urlencode=''):
 
 @register.simple_tag
 def get_admin_url(scheme, base_url):
-    return f"{scheme}://{base_url}/{os.environ.get('ADMIN_PAGE', 'admin/')}"
+    return f"{scheme}://{base_url}/{config('ADMIN_PAGE', 'admin/')}"

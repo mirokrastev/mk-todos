@@ -19,7 +19,8 @@
             <div class="col-md border-right justify-content-center text-center">
                 <span>All Teams:</span><br><br>
                 {% if all_teams %}
-                {% include 'teams/home/render/render_team.html' with teams=all_teams %}
+                    {% include 'teams/home/render/render_team.html' with teams=all_teams %}
+                    {% include 'pagination/paginator.html' with object=all_teams query_key='at_page' %}
                 {% else %}
                 You are not a member of any team!
                 {% endif %}
@@ -27,7 +28,8 @@
             <div class="col-md border-right border-right justify-content-center text-center">
                 <span>Owned Teams:</span><br><br>
                 {% if ownership_teams %}
-                {% include 'teams/home/render/render_team.html' with teams=ownership_teams %}
+                    {% include 'teams/home/render/render_team.html' with teams=ownership_teams %}
+                    {% include 'pagination/paginator.html' with object=ownership_teams query_key='ot_page' %}
                 {% else %}
                 You don't have a Team!
                 {% endif %}

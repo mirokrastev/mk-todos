@@ -26,7 +26,7 @@ PASSWORD_RESET_TIMEOUT = 7200
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=str).split(', ')
+ALLOWED_HOSTS = hosts.split(', ') if (hosts := config('ALLOWED_HOSTS', default=None)) else []
 
 
 # Application definition

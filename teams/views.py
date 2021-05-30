@@ -14,19 +14,32 @@ from teams.mixins import InitializeTeamMixin
 from django.db import IntegrityError
 
 
-class TeamHomeView(EnableSearchBarMixin, ContextMixin, GenericDispatchMixin, View):
+class TeamHomeView(PaginateObjectMixin, ContextMixin, GenericDispatchMixin, View):
+    per_page = 3
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.all_teams = None
-        self.ownership_teams = None
         self.errors = None
         self.message = None
+        self.all_teams = None
+        self.ownership_teams = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.all_teams = cache.get(self.request.user)['user_teams']
-        self.ownership_teams = self.all_teams.filter(owner=self.request.user)
         self.errors = self.request.session.pop('errors', None)
         self.message = self.request.session.pop('message', None)
+
+        # First, query the database
+        self.all_teams = cache.get(self.request.user)['user_teams']
+        self.ownership_teams = self.all_teams.filter(owner=self.request.user)
+
+        # Second, get query params for page
+        all_teams_page = self.request.GET.get('at_page', 1)
+        ownership_teams_page = self.request.GET.get('ot_page', 1)
+
+        # Third, paginate the objects
+        self.all_teams = self.paginate(self.all_teams, all_teams_page)
+        self.ownership_teams = self.paginate(self.ownership_teams, ownership_teams_page)
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
