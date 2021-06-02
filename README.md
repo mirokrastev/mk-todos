@@ -1,4 +1,11 @@
-# Todo Site
+# MK-TODOS
+
+## Requirements
+This project requires Python >= 3.8 to work.<br>
+You need to install the dependencies from ```requirements.txt``` and configure ```.env``` file
+<br><br>
+
+## Features
 This is a fully functioning Todo site. Some of the site features include:
 * Full CRUD control over your Todos. This means that you can:
   * Create your Todo
