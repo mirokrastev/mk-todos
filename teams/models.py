@@ -5,12 +5,13 @@ from teams.managers import TeamManager
 
 # TODO: TRY TO DO IT WITH MANYTOMANY RELATIONSHIP
 class Team(models.Model):
-    title = models.SlugField(db_index=True, max_length=25, unique=True, verbose_name='Team')
+    title = models.CharField(db_index=True, max_length=25, unique=True, verbose_name='Team')
+    slug = models.SlugField(max_length=25, blank=True, unique=True, allow_unicode=True)
     identifier = models.CharField(db_index=True, unique=True, max_length=20)
     owner = models.ForeignKey(db_index=True, to=CustomUser, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.title = slugify(self.title)
+        self.slug = slugify(self.title, allow_unicode=True)
         return super().save(*args, **kwargs)
 
     def __str__(self):

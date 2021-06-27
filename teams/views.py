@@ -167,7 +167,7 @@ class AcceptUser(FullInitializer, View):
     def post(self, request, *args, **kwargs):
         self.user.delete()
         TeamJunction.objects.create(team=self.team, user=self.user.user)
-        return redirect(reverse('teams:manage_team', kwargs={'team': self.team}))
+        return redirect(reverse('teams:manage_team', kwargs={'team': self.team.slug}))
 
 
 class KickUser(FullInitializer, ContextMixin, GenericDispatchMixin, View):
@@ -186,7 +186,7 @@ class KickUser(FullInitializer, ContextMixin, GenericDispatchMixin, View):
 
     def post(self, request, *args, **kwargs):
         self.user.delete()
-        return redirect(reverse('teams:manage_team', kwargs={'team': self.team}))
+        return redirect(reverse('teams:manage_team', kwargs={'team': self.team.slug}))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -250,7 +250,7 @@ class ChangeTeamIdentifier(InitializeTeamMixin, BaseRedirectFormView):
         return self.redirect()
 
     def redirect(self, redirect_kwargs=None):
-        return super().redirect({'team': self.team})
+        return super().redirect({'team': self.team.slug})
 
 
 class ChangeTeamName(InitializeTeamMixin, BaseRedirectFormView):
@@ -275,4 +275,4 @@ class ChangeTeamName(InitializeTeamMixin, BaseRedirectFormView):
         return self.redirect()
 
     def redirect(self, redirect_kwargs=None):
-        return super().redirect({'team': self.team})
+        return super().redirect({'team': self.team.slug})

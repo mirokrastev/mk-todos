@@ -11,9 +11,12 @@ class GetSingleTodoMixin:
     team_todo = False
 
     def get_object(self, *args, **kwargs):
-        if not self.team_todo:
-            return self.__get_user_todo()
-        return self.__get_team_todo()
+        todo = self.__get_team_todo() if self.team_todo else self.__get_user_todo()
+        slug_kwarg = self.kwargs['todo_title']
+
+        if not todo or todo.slug != slug_kwarg:
+            return None
+        return todo
 
     def __get_user_todo(self):
         try:
@@ -24,7 +27,7 @@ class GetSingleTodoMixin:
 
     def __get_team_todo(self):
         try:
-            team = TeamJunction.objects.get(user=self.request.user, team__title=self.kwargs['team']).team
+            team = TeamJunction.objects.get(user=self.request.user, team__slug=self.kwargs['team']).team
             return TeamTodo.objects.get(pk=self.kwargs['todo_pk'],
                                         team=team)
         except (TeamJunction.DoesNotExist, TeamTodo.DoesNotExist, ValueError):

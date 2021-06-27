@@ -11,7 +11,7 @@ class InitializeTeamMixin:
         self.is_trusted = False
 
     def dispatch(self, request, *args, **kwargs):
-        self.team = Team.objects.get_or_none(title=self.kwargs['team'])
+        self.team = Team.objects.get_or_none(slug=self.kwargs['team'])
         if not self.team:
             raise Http404
 

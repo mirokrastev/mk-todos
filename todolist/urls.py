@@ -11,16 +11,16 @@ urlpatterns = [
     path('completed/', login_required(CompletedTodoHomeView.as_view()), name='completed_todos'),
 
     # User Todos Management
-    path('<int:todo_pk>/<slug:todo_title>/', login_required(user.UserDetailedTodo.as_view()),
+    path('<int:todo_pk>/<str:todo_title>/', login_required(user.UserDetailedTodo.as_view()),
          name='user_detailed_todo'),
 
-    path('<int:todo_pk>/<slug:todo_title>/complete/', login_required(generic.CompleteTodo.as_view()),
+    path('<int:todo_pk>/<str:todo_title>/complete/', login_required(generic.CompleteTodo.as_view()),
          name='user_complete_todo'),
 
-    path('<int:todo_pk>/<slug:todo_title>/reopen/', login_required(generic.ReopenTodo.as_view()),
+    path('<int:todo_pk>/<str:todo_title>/reopen/', login_required(generic.ReopenTodo.as_view()),
          name='user_reopen_todo'),
 
-    path('<int:todo_pk>/<slug:todo_title>/delete/', login_required(generic.DeleteTodo.as_view()),
+    path('<int:todo_pk>/<str:todo_title>/delete/', login_required(generic.DeleteTodo.as_view()),
          name='user_delete_todo'),
 ]
 
@@ -29,15 +29,15 @@ teams_urlpatterns += [
     path('todo/create/', login_required(team.TeamTodoCreation.as_view()),
          name='team_todo_create'),
 
-    path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/', login_required(team.TeamDetailedTodo.as_view()),
+    path('<str:team>/todo/<int:todo_pk>/<str:todo_title>/', login_required(team.TeamDetailedTodo.as_view()),
          name='team_detailed_todo'),
 
-    path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/complete/', login_required(generic.CompleteTodo.as_view()),
+    path('<str:team>/todo/<int:todo_pk>/<str:todo_title>/complete/', login_required(generic.CompleteTodo.as_view()),
          name='team_complete_todo'),
 
-    path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/reopen/', login_required(generic.ReopenTodo.as_view()),
+    path('<str:team>/todo/<int:todo_pk>/<str:todo_title>/reopen/', login_required(generic.ReopenTodo.as_view()),
          name='team_reopen_todo'),
 
-    path('<slug:team>/todo/<int:todo_pk>/<slug:todo_title>/delete/', login_required(generic.DeleteTodo.as_view()),
+    path('<str:team>/todo/<int:todo_pk>/<str:todo_title>/delete/', login_required(generic.DeleteTodo.as_view()),
          name='team_delete_todo'),
 ]

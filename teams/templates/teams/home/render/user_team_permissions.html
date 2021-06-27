@@ -1,15 +1,15 @@
 {% if team.owner == request.user %}
-<a style="display: inline-block;" href="{% url 'teams:manage_team' team.title %}">
+<a style="display: inline-block;" href="{% url 'teams:manage_team' team.slug %}">
     <button class="btn btn-outline-dark">Edit</button>
 </a>
-<a style="display: inline-block; padding: 5px;" href="{% url 'teams:delete_team' team.title %}">
+<a style="display: inline-block; padding: 5px;" href="{% url 'teams:delete_team' team.slug %}">
     <button class="btn btn-outline-dark">Delete</button>
 </a>
 {% else %}
-<a style="display: inline-block;" href="{% url 'teams:manage_team' team.title %}">
+<a style="display: inline-block;" href="{% url 'teams:manage_team' team.slug %}">
     <button class="btn btn-outline-dark">View</button>
 </a>
-<a style="display: inline-block; padding: 5px;" href="{% url 'teams:leave_team' team.title %}">
+<a style="display: inline-block; padding: 5px;" href="{% url 'teams:leave_team' team.slug %}">
     <button class="btn btn-outline-dark">Leave</button>
 </a>
 {% endif %}
